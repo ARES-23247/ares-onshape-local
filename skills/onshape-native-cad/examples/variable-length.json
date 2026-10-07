@@ -1,0 +1,32 @@
+{
+  "feature": {
+    "btType": "BTMFeature-134",
+    "featureType": "assignVariable",
+    "name": "plateThickness = 6 mm",
+    "parameters": [
+      {
+        "btType": "BTMParameterEnum-145",
+        "parameterId": "mode",
+        "enumName": "VariableMode",
+        "value": "ASSIGNED"
+      },
+      {
+        "btType": "BTMParameterEnum-145",
+        "parameterId": "variableType",
+        "enumName": "VariableType",
+        "value": "LENGTH"
+      },
+      {
+        "btType": "BTMParameterString-149",
+        "parameterId": "name",
+        "value": "plateThickness"
+      },
+      {
+        "btType": "BTMParameterQuantity-147",
+        "parameterId": "lengthValue",
+        "expression": "6 mm",
+        "isInteger": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "scope": "Sanitized historical native payload patterns; no live target or complete generator.",
+  "changesInTheseExamples": [
+    "Removed response metadata and original source identities.",
+    "Adapted extrude depth to a variable expression and sketch reference to a placeholder.",
+    "Retained an example plane query that must be resolved in each target."
+  ],
+  "notYetVerified": [
+    "These exact adapted requests have not been replayed in a fresh public-package target.",
+    "Check variable syntax and serialized native parameters against current Explorer schemas.",
+    "Add native dimensional constraints to make sketch size a driven parameter."
+  ],
+  "requiredReadback": [
+    "Fresh native feature states",
+    "Actual regenerated geometry",
+    "Intended edit after a variable change",
+    "Actual assembly degrees of freedom when applicable"
+  ]
+}

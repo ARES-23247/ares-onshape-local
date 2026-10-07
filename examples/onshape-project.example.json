@@ -1,0 +1,16 @@
+{
+  "project": "Example project with synthetic source identities",
+  "designs": {
+    "demo": {
+      "architecture": "Replace these synthetic IDs with your actual editable Onshape source",
+      "onshape": {
+        "document_id": "aaaaaaaaaaaaaaaaaaaaaaaa",
+        "workspace_id": "bbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    }
+  },
+  "shared_references": {},
+  "snapshot_dirs": ["receipts"],
+  "runtime_dir": ".ares-onshape",
+  "event_dir": "events"
+}

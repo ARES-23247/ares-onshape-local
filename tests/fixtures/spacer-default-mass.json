@@ -1,0 +1,98 @@
+{
+  "fixture": "Anonymized historical native geometry; synthetic source IDs; no live request performed by these tests",
+  "transport": "onshape-session",
+  "method": "GET",
+  "httpStatus": 200,
+  "observedAt": "2026-10-04T00:00:00+00:00",
+  "units": "m",
+  "requestUrl": "https://cad.onshape.com/api/v17/partstudios/d/ffffffffffffffffffffffff/m/ffffffffffffffffffffffff/e/ffffffffffffffffffffffff/massproperties",
+  "response": {
+    "bodies": {
+      "JHD": {
+        "centroid": [
+          0,
+          0,
+          0,
+          -1e-06,
+          -1e-06,
+          -1e-06,
+          1e-06,
+          1e-06,
+          1e-06
+        ],
+        "hasMass": false,
+        "inertia": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -3.1667253948185143e-12,
+          -3.1667253948185143e-12,
+          -3.1667253948185143e-12,
+          -3.1667253948185143e-12,
+          -3.1667253948185143e-12,
+          -3.1667253948185143e-12,
+          -3.1667253948185143e-12,
+          -3.1667253948185143e-12,
+          -3.1667253948185143e-12,
+          3.1667253948185143e-12,
+          3.1667253948185143e-12,
+          3.1667253948185143e-12,
+          3.1667253948185143e-12,
+          3.1667253948185143e-12,
+          3.1667253948185143e-12,
+          3.1667253948185143e-12,
+          3.1667253948185143e-12,
+          3.1667253948185143e-12
+        ],
+        "mass": [
+          0,
+          -2.1564543543363032e-10,
+          2.1564543543363032e-10
+        ],
+        "massMissingCount": 1,
+        "periphery": [
+          0.0015833626974092558,
+          0.001583348012538285,
+          0.0015833773822802267
+        ],
+        "principalAxes": [
+          {
+            "btType": "BTVector3d-389",
+            "x": 1,
+            "y": 0,
+            "z": 0
+          },
+          {
+            "btType": "BTVector3d-389",
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          {
+            "btType": "BTVector3d-389",
+            "x": 0,
+            "y": 0,
+            "z": 1
+          }
+        ],
+        "principalInertia": [
+          0,
+          0,
+          0
+        ],
+        "volume": [
+          3.166725394818512e-06,
+          3.166509749383078e-06,
+          3.1669410402539455e-06
+        ]
+      }
+    },
+    "microversionId": "ffffffffffffffffffffffff"
+  }
+}

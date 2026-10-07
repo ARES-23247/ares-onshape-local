@@ -1,0 +1,46 @@
+{
+  "feature": {
+    "btType": "BTMFeature-134",
+    "namespace": "",
+    "name": "Reference plate - variable thickness",
+    "suppressed": false,
+    "parameters": [
+      {
+        "btType": "BTMParameterQueryList-148",
+        "libraryRelationType": "DEFAULT",
+        "queries": [
+          {
+            "btType": "BTMIndividualSketchRegionQuery-140",
+            "filterInnerLoops": true,
+            "queryString": "query = qSketchRegion(id + \"SKETCH_FEATURE_ID\", true);",
+            "featureId": "SKETCH_FEATURE_ID",
+            "deterministicIds": []
+          }
+        ],
+        "parameterId": "entities"
+      },
+      {
+        "btType": "BTMParameterEnum-145",
+        "namespace": "",
+        "libraryRelationType": "DEFAULT",
+        "enumName": "NewBodyOperationType",
+        "value": "NEW",
+        "parameterId": "operationType"
+      },
+      {
+        "btType": "BTMParameterQuantity-147",
+        "libraryRelationType": "DEFAULT",
+        "isInteger": false,
+        "expression": "#plateThickness",
+        "parameterId": "depth"
+      },
+      {
+        "btType": "BTMParameterBoolean-144",
+        "libraryRelationType": "DEFAULT",
+        "value": false,
+        "parameterId": "oppositeDirection"
+      }
+    ],
+    "featureType": "extrude"
+  }
+}

@@ -1,0 +1,2027 @@
+{
+  "fixture": "Anonymized historical native geometry; synthetic source IDs; no live request performed by these tests",
+  "transport": "onshape-session",
+  "method": "GET",
+  "httpStatus": 200,
+  "observedAt": "2026-10-04T00:00:00+00:00",
+  "units": "m",
+  "requestUrl": "https://cad.onshape.com/api/v17/partstudios/d/ffffffffffffffffffffffff/m/ffffffffffffffffffffffff/e/ffffffffffffffffffffffff/bodydetails",
+  "response": {
+    "bodies": [
+      {
+        "btType": "BTExportModelBody-1272",
+        "consumedByComposite": false,
+        "edges": [
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "length": 0.004,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0.002
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0.003
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              }
+            },
+            "id": "JHB",
+            "vertices": [
+              "JHE",
+              "IH"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "length": 0.004,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0.002
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0.003
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              }
+            },
+            "id": "JHF",
+            "vertices": [
+              "JHM",
+              "JHI"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "length": 0.004,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.002
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.003
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              }
+            },
+            "id": "JHJ",
+            "vertices": [
+              "JHU",
+              "JHQ"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "length": 0.004,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0.002
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0.003
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              }
+            },
+            "id": "JHN",
+            "vertices": [
+              "JHc",
+              "JHY"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": -1,
+                "y": 0,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": -1,
+                "y": 0,
+                "z": 0
+              },
+              "length": 0.08,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": -1,
+                "y": 0,
+                "z": 0
+              }
+            },
+            "id": "JHl",
+            "vertices": [
+              "JHU",
+              "JHc"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0,
+                "z": 0.004
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.05,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0,
+                "z": 0.004
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JHd",
+            "vertices": [
+              "JHM",
+              "JHU"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 1,
+                "y": 0,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 1,
+                "y": 0,
+                "z": 0
+              },
+              "length": 0.08,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.02,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 1,
+                "y": 0,
+                "z": 0
+              }
+            },
+            "id": "JHV",
+            "vertices": [
+              "JHE",
+              "JHM"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -1,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0,
+                "z": 0.004
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -1,
+                "z": 0
+              },
+              "length": 0.05,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0,
+                "z": 0.004
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -1,
+                "z": 0
+              }
+            },
+            "id": "JHt",
+            "vertices": [
+              "JHc",
+              "JHE"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": -1,
+                "y": 0,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0.025,
+                "z": 0
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": -1,
+                "y": 0,
+                "z": 0
+              },
+              "length": 0.08,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0.025,
+                "z": 0
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02,
+                "y": 0.025,
+                "z": 0
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": -1,
+                "y": 0,
+                "z": 0
+              }
+            },
+            "id": "JHh",
+            "vertices": [
+              "JHQ",
+              "JHY"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0,
+                "z": 0
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.05,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0,
+                "z": 0
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.0125,
+                "z": 0
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JHZ",
+            "vertices": [
+              "JHI",
+              "JHQ"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 1,
+                "y": 0,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -0.025,
+                "z": 0
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 1,
+                "y": 0,
+                "z": 0
+              },
+              "length": 0.08,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -0.025,
+                "z": 0
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.02,
+                "y": -0.025,
+                "z": 0
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 1,
+                "y": 0,
+                "z": 0
+              }
+            },
+            "id": "JHR",
+            "vertices": [
+              "IH",
+              "JHI"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTLineDescription-1559",
+              "direction": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -1,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0,
+                "z": 0
+              },
+              "type": "LINE"
+            },
+            "geometry": {
+              "btType": "BTExportModelEdgeGeometry-1125",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -1,
+                "z": 0
+              },
+              "length": 0.05,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0,
+                "z": 0
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.0125,
+                "z": 0
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -1,
+                "z": 0
+              }
+            },
+            "id": "JHp",
+            "vertices": [
+              "JHY",
+              "IH"
+            ]
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTCircleDescription-1145",
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CIRCLE"
+            },
+            "geometry": {
+              "arcIsClockwise": false,
+              "arcSweep": 6.283185307179586,
+              "btType": "BTExportModelArcEdgeGeometry-1257",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.01413716694115406,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.02725000000000002,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": -0.010250000000000002,
+                "z": 0.004
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JLR",
+            "vertices": []
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTCircleDescription-1145",
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": -0.0125,
+                "z": 0
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CIRCLE"
+            },
+            "geometry": {
+              "arcIsClockwise": false,
+              "arcSweep": 6.283185307179586,
+              "btType": "BTExportModelArcEdgeGeometry-1257",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": -0.0125,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.01413716694115406,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.02725000000000002,
+                "y": -0.0125,
+                "z": 0
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": -0.010250000000000002,
+                "z": 0
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": -0.0125,
+                "z": 0
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JLB",
+            "vertices": []
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTCircleDescription-1145",
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CIRCLE"
+            },
+            "geometry": {
+              "arcIsClockwise": false,
+              "arcSweep": 6.283185307179586,
+              "btType": "BTExportModelArcEdgeGeometry-1257",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.01413716694115406,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.02725000000000002,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": 0.01475,
+                "z": 0.004
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JLV",
+            "vertices": []
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTCircleDescription-1145",
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": 0.0125,
+                "z": 0
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CIRCLE"
+            },
+            "geometry": {
+              "arcIsClockwise": false,
+              "arcSweep": 6.283185307179586,
+              "btType": "BTExportModelArcEdgeGeometry-1257",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": 0.0125,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.01413716694115406,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.02725000000000002,
+                "y": 0.0125,
+                "z": 0
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": 0.01475,
+                "z": 0
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": 0.0125,
+                "z": 0
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JLF",
+            "vertices": []
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTCircleDescription-1145",
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CIRCLE"
+            },
+            "geometry": {
+              "arcIsClockwise": false,
+              "arcSweep": 6.283185307179586,
+              "btType": "BTExportModelArcEdgeGeometry-1257",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.01413716694115406,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.022750000000000024,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": -0.010250000000000002,
+                "z": 0.004
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JLZ",
+            "vertices": []
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTCircleDescription-1145",
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": -0.0125,
+                "z": 0
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CIRCLE"
+            },
+            "geometry": {
+              "arcIsClockwise": false,
+              "arcSweep": 6.283185307179586,
+              "btType": "BTExportModelArcEdgeGeometry-1257",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": -0.0125,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.01413716694115406,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.022750000000000024,
+                "y": -0.0125,
+                "z": 0
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": -0.010250000000000002,
+                "z": 0
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": -0.0125,
+                "z": 0
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JLJ",
+            "vertices": []
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTCircleDescription-1145",
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CIRCLE"
+            },
+            "geometry": {
+              "arcIsClockwise": false,
+              "arcSweep": 6.283185307179586,
+              "btType": "BTExportModelArcEdgeGeometry-1257",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.01413716694115406,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.022750000000000024,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": 0.01475,
+                "z": 0.004
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JLd",
+            "vertices": []
+          },
+          {
+            "btType": "BTExportModelEdge-1782",
+            "curve": {
+              "btType": "BTCircleDescription-1145",
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": 0.0125,
+                "z": 0
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CIRCLE"
+            },
+            "geometry": {
+              "arcIsClockwise": false,
+              "arcSweep": 6.283185307179586,
+              "btType": "BTExportModelArcEdgeGeometry-1257",
+              "endPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": 0.0125,
+                "z": 0
+              },
+              "endVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "length": 0.01413716694115406,
+              "midPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.022750000000000024,
+                "y": 0.0125,
+                "z": 0
+              },
+              "quarterPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": 0.01475,
+                "z": 0
+              },
+              "startPoint": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": 0.0125,
+                "z": 0
+              },
+              "startVector": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              }
+            },
+            "id": "JLN",
+            "vertices": []
+          }
+        ],
+        "faces": [
+          {
+            "appearancePropertyNodeId": "",
+            "area": 0.0002,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JHW",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": true
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "btType": "BTPlaneDescription-692",
+              "isOrientedWithFace": true,
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 1,
+                "y": 0,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0,
+                "z": 0.004
+              },
+              "type": "PLANE"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 0.00032,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JHC",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": true
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "btType": "BTPlaneDescription-692",
+              "isOrientedWithFace": true,
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 1,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -0.025,
+                "z": 0.004
+              },
+              "type": "PLANE"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 0.0002,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": -0.025,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JHO",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": true
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "btType": "BTPlaneDescription-692",
+              "isOrientedWithFace": true,
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": -1,
+                "y": 0,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0,
+                "z": 0.004
+              },
+              "type": "PLANE"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 0.00032,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": 0.025,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JHS",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": true
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "btType": "BTPlaneDescription-692",
+              "isOrientedWithFace": true,
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": -1,
+                "z": 0
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "type": "PLANE"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 0.003936382748764807,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0.004
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JLW",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": true,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": true,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": true,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": true,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": true
+              }
+            ],
+            "orientation": true,
+            "surface": {
+              "btType": "BTPlaneDescription-692",
+              "isOrientedWithFace": true,
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 0.004
+              },
+              "type": "PLANE"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 0.003936382748764807,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.04,
+                "y": 0.025,
+                "z": 0
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.04,
+                "y": -0.025,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JLS",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": true,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": true,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": true,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": true,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]",
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": true
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "btType": "BTPlaneDescription-692",
+              "isOrientedWithFace": true,
+              "normal": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 1
+              },
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": 0
+              },
+              "type": "PLANE"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 5.654866776461625e-05,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": -0.010250000000000002,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.02725000000000002,
+                "y": -0.01475,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JLC",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": false
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "axis": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "btType": "BTCylinderDescription-686",
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CYLINDER"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 5.654866776461625e-05,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": 0.01475,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.022750000000000024,
+                "y": 0.010250000000000002,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JLO",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": false
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "axis": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "btType": "BTCylinderDescription-686",
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CYLINDER"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 5.654866776461625e-05,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.02725000000000002,
+                "y": -0.010250000000000002,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": 0.022750000000000024,
+                "y": -0.01475,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JLK",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": false
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "axis": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "btType": "BTCylinderDescription-686",
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": 0.025000000000000026,
+                "y": -0.0125,
+                "z": 0.004
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CYLINDER"
+            }
+          },
+          {
+            "appearancePropertyNodeId": "",
+            "area": 5.654866776461625e-05,
+            "box": {
+              "btType": "BTBoundingBox-1052",
+              "maxCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.022750000000000024,
+                "y": 0.01475,
+                "z": 0.004
+              },
+              "minCorner": {
+                "btType": "BTVector3d-389",
+                "x": -0.02725000000000002,
+                "y": 0.010250000000000002,
+                "z": 0
+              }
+            },
+            "btType": "BTExportModelFace-1363",
+            "cosmeticThreadMetadata": null,
+            "faceProperties": null,
+            "id": "JLG",
+            "loops": [
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": false
+              },
+              {
+                "btType": "BTExportModelLoop-1182",
+                "coedges": [
+                  "[MaxDepth]"
+                ],
+                "isInner": false,
+                "isOuter": false
+              }
+            ],
+            "orientation": false,
+            "surface": {
+              "axis": {
+                "btType": "BTVector3d-389",
+                "x": 0,
+                "y": 0,
+                "z": -1
+              },
+              "btType": "BTCylinderDescription-686",
+              "origin": {
+                "btType": "BTVector3d-389",
+                "x": -0.025000000000000026,
+                "y": 0.0125,
+                "z": 0.004
+              },
+              "radius": 0.0022499999999999985,
+              "type": "CYLINDER"
+            }
+          }
+        ],
+        "id": "JHD",
+        "properties": {
+          "appearance": {
+            "btType": "BTGeneratedGraphicsAppearance-4159",
+            "color": "nc/t",
+            "opacity": 255,
+            "type": "UNKNOWN"
+          },
+          "btType": "BTExportBodyProperties-3559",
+          "material": null,
+          "name": "Part 1",
+          "visibility": "VISIBLE"
+        },
+        "type": "SOLID",
+        "vertices": [
+          {
+            "btType": "BTExportModelVertex-858",
+            "id": "JHc",
+            "point": {
+              "btType": "BTVector3d-389",
+              "x": -0.04,
+              "y": 0.025,
+              "z": 0.004
+            }
+          },
+          {
+            "btType": "BTExportModelVertex-858",
+            "id": "JHU",
+            "point": {
+              "btType": "BTVector3d-389",
+              "x": 0.04,
+              "y": 0.025,
+              "z": 0.004
+            }
+          },
+          {
+            "btType": "BTExportModelVertex-858",
+            "id": "JHM",
+            "point": {
+              "btType": "BTVector3d-389",
+              "x": 0.04,
+              "y": -0.025,
+              "z": 0.004
+            }
+          },
+          {
+            "btType": "BTExportModelVertex-858",
+            "id": "JHE",
+            "point": {
+              "btType": "BTVector3d-389",
+              "x": -0.04,
+              "y": -0.025,
+              "z": 0.004
+            }
+          },
+          {
+            "btType": "BTExportModelVertex-858",
+            "id": "JHY",
+            "point": {
+              "btType": "BTVector3d-389",
+              "x": -0.04,
+              "y": 0.025,
+              "z": 0
+            }
+          },
+          {
+            "btType": "BTExportModelVertex-858",
+            "id": "JHQ",
+            "point": {
+              "btType": "BTVector3d-389",
+              "x": 0.04,
+              "y": 0.025,
+              "z": 0
+            }
+          },
+          {
+            "btType": "BTExportModelVertex-858",
+            "id": "JHI",
+            "point": {
+              "btType": "BTVector3d-389",
+              "x": 0.04,
+              "y": -0.025,
+              "z": 0
+            }
+          },
+          {
+            "btType": "BTExportModelVertex-858",
+            "id": "IH",
+            "point": {
+              "btType": "BTVector3d-389",
+              "x": -0.04,
+              "y": -0.025,
+              "z": 0
+            }
+          }
+        ]
+      }
+    ],
+    "btType": "BTExportModelBodiesResponse-734",
+    "errorEnum": "NO_ERROR",
+    "microversionId": {
+      "btType": "BTMicroversionId-366",
+      "theId": "ffffffffffffffffffffffff"
+    }
+  }
+}

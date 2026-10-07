@@ -1,0 +1,6 @@
+interface:
+  display_name: "Native Onshape CAD"
+  short_description: "Parametric CAD through the signed-in Onshape session"
+  default_prompt: "Use $onshape-native-cad to build and verify native parametric Onshape parts and assembly motion."
+policy:
+  allow_implicit_invocation: true
