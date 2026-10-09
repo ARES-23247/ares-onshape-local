@@ -8,6 +8,7 @@ import sys
 from time import perf_counter
 
 import part_recipes as recipes
+import part_spec
 
 from project_config import WORKSPACE
 
@@ -23,6 +24,9 @@ def run(job):
     from build123d import export_step, export_stl, import_step
     recipe = job["recipe"]
     p = recipes.normalize(recipe, job["parameters_mm"])
+    definition = part_spec.validate(job.get("part_definition", part_spec.make(recipe, p, job["label"], job["design"])))
+    if definition != part_spec.make(recipe, p, job["label"], job["design"]):
+        raise ValueError("Worker dimensions differ from the shared part definition")
     folder = Path(job["output_dir"]).resolve()
     if not folder.is_relative_to(WORKSPACE.resolve()) or "FEASIBILITY" not in folder.as_posix():
         raise ValueError("Recipe output must be a FEASIBILITY folder inside the workspace")
@@ -47,6 +51,8 @@ def run(job):
     mesh = {"units": "mm", "vertices": [list(v) for v in vertices], "triangles": triangles}
     (folder / "mesh.json").write_text(json.dumps(mesh, separators=(",", ":")), encoding="utf-8")
     (folder / "native-plan.json").write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
+    definition_path = folder / "part-definition.json"
+    definition_path.write_text(json.dumps(definition, indent=2) + "\n", encoding="utf-8")
     record = {"schema_version": 1, "created_at": datetime.now(timezone.utc).isoformat(),
               "engine": "build123d", "engine_version": version("build123d"), "recipe": recipe,
               "label": job["label"], "design": job["design"], "units": "mm", "parameters_mm": p,
@@ -56,12 +62,14 @@ def run(job):
               "native_plan": "native-plan.json", "native_regeneration_verified": False,
               "physical_validation": False, "final_fabrication_release": False,
               "outbound_Onshape_calls": 0, "network_access": "forbidden by worker audit hook",
+              "part_definition_sha256": part_spec.digest(definition), "part_definition": definition_path.name,
               "assumptions": recipes.catalog()["assumptions"]}
-    files = [step, stl, folder / "mesh.json", folder / "native-plan.json"]
+    files = [step, stl, folder / "mesh.json", folder / "native-plan.json", definition_path]
     record["artifacts"] = {f.name: {"bytes": f.stat().st_size, "sha256": hashlib.sha256(f.read_bytes()).hexdigest()} for f in files}
     (folder / "recipe.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
     return {"recipe": recipe, "folder": str(folder), "record": str(folder / "recipe.json"),
             "step": str(step), "experimental_stl": str(stl), "native_plan": str(folder / "native-plan.json"),
+            "part_definition": str(definition_path), "part_definition_sha256": part_spec.digest(definition),
             "local_geometry_passed": local_checks["passed"], "step_roundtrip_passed": roundtrip["passed"],
             "volume_mm3": shape.volume, "generation_seconds": record["generation_seconds"],
             "scope": "FEASIBILITY only; native Onshape regeneration and physical fit not verified",

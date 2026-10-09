@@ -26,6 +26,25 @@ RECIPES = {
                         "hole_diameter": 4.5, "pitch_x": 60.0, "pitch_y": 30.0},
         "datum": "Rectangle centred in XY; bottom z=0; thickness extends in +Z",
     },
+    "flanged_hub": {
+        "description": "Stepped cylindrical hub with a flange and concentric through bore",
+        "defaults_mm": {"flange_diameter": 40.0, "hub_diameter": 24.0, "bore_diameter": 8.0,
+                        "flange_thickness": 4.0, "length": 20.0},
+        "datum": "Bore on Z axis; flange bottom z=0; overall length extends in +Z",
+    },
+    "radial_hole_plate": {
+        "description": "Round plate with a centre bore and six equally spaced bolt holes",
+        "defaults_mm": {"outer_diameter": 80.0, "bore_diameter": 8.0, "thickness": 4.0,
+                        "hole_diameter": 4.5, "bolt_circle_diameter": 60.0},
+        "datum": "Plate centred on Z axis; bottom z=0; six holes start on +X",
+        "fixed_hole_count": 6,
+    },
+    "lofted_guide": {
+        "description": "Centred rectangular transition with open ends and straight tapered walls",
+        "defaults_mm": {"inlet_width": 60.0, "inlet_height": 40.0, "outlet_width": 30.0,
+                        "outlet_height": 20.0, "length": 60.0, "wall": 3.0},
+        "datum": "Inlet centred at z=0; outlet centred at z=length; wall measured in each XY section",
+    },
 }
 MIN_WEB = 1.0  # Geometric guard, not a load-bearing design requirement.
 
@@ -40,7 +59,7 @@ def catalog():
 
 def normalize(recipe, supplied):
     if recipe not in RECIPES or not isinstance(supplied, dict):
-        raise ValueError("Choose spacer, mounting_bracket or hole_pattern_plate with a parameter object")
+        raise ValueError("Choose a listed bounded recipe with a parameter object")
     defaults = RECIPES[recipe]["defaults_mm"]
     if set(supplied) - set(defaults):
         raise ValueError("Unknown recipe parameter; use list_part_recipes for the allowed millimetre dimensions")
@@ -61,6 +80,19 @@ def normalize(recipe, supplied):
                (p["depth"] - p["pitch_y"] - d) / 2,
                p["pitch_x"] - d, p["pitch_y"] - d) < MIN_WEB:
             raise ValueError("Plate holes must retain at least 1 mm edge/inter-hole web")
+    elif recipe == "flanged_hub":
+        if min((p["hub_diameter"] - p["bore_diameter"]) / 2,
+               (p["flange_diameter"] - p["hub_diameter"]) / 2,
+               p["length"] - p["flange_thickness"]) < MIN_WEB:
+            raise ValueError("Hub needs at least 1 mm bore wall, flange shoulder and exposed hub length")
+    elif recipe == "radial_hole_plate":
+        if min((p["outer_diameter"] - p["bolt_circle_diameter"] - p["hole_diameter"]) / 2,
+               (p["bolt_circle_diameter"] - p["bore_diameter"] - p["hole_diameter"]) / 2,
+               p["bolt_circle_diameter"] / 2 - p["hole_diameter"]) < MIN_WEB:
+            raise ValueError("Radial holes need at least 1 mm edge, bore and adjacent-hole web")
+    elif recipe == "lofted_guide":
+        if min(p[k] - 2 * p["wall"] for k in ("inlet_width", "inlet_height", "outlet_width", "outlet_height")) < 1:
+            raise ValueError("Guide must retain at least 1 mm open width and height at both ends")
     else:
         r, t = p["hole_diameter"] / 2, p["thickness"]
         if min(p["base_depth"] - t, p["height"] - t) <= 2 * r + 2 * MIN_WEB:
@@ -74,6 +106,8 @@ def normalize(recipe, supplied):
 
 def expected_geometry(recipe, p):
     """Independent analytic volume and named material/void probes."""
+    if recipe in ("flanged_hub", "radial_hole_plate", "lofted_guide"):
+        return extended_geometry(recipe, p)
     if recipe == "spacer":
         od, bore, length = p["outer_diameter"], p["bore_diameter"], p["length"]
         return {"volume_mm3": math.pi / 4 * (od * od - bore * bore) * length,
@@ -102,7 +136,10 @@ def expected_geometry(recipe, p):
 
 def native_plan(recipe, p):
     """High-level native instructions, intentionally not serialized API feature bodies."""
-    if recipe == "spacer":
+    if recipe in ("flanged_hub", "radial_hole_plate", "lofted_guide"):
+        import native_recipe_features as compiler
+        steps = compiler.operations(recipe, p)
+    elif recipe == "spacer":
         steps = [{"name": "Spacer annulus", "operation": "native_sketch", "plane": "XY at z=0",
                   "geometry": {"concentric_circles_diameter_mm": [p["outer_diameter"], p["bore_diameter"]]},
                   "design_intent": "Constrain common centre to origin and diameters to named variables"},
@@ -152,8 +189,24 @@ def native_plan(recipe, p):
 
 
 def build_shape(recipe, p):
-    from build123d import Align, Box, Cylinder, Pos, Rot
+    from build123d import Align, Box, Cylinder, Pos, Rot, Plane, Rectangle, loft
     aligned = (Align.CENTER, Align.CENTER, Align.MIN)
+    if recipe == "flanged_hub":
+        part = Cylinder(p["flange_diameter"] / 2, p["flange_thickness"], align=aligned)
+        part += Cylinder(p["hub_diameter"] / 2, p["length"], align=aligned)
+        return part - Cylinder(p["bore_diameter"] / 2, p["length"], align=aligned)
+    if recipe == "radial_hole_plate":
+        part = Cylinder(p["outer_diameter"] / 2, p["thickness"], align=aligned)
+        part -= Cylinder(p["bore_diameter"] / 2, p["thickness"], align=aligned)
+        for x, y in radial_centres(p):
+            part -= Pos(x, y, 0) * Cylinder(p["hole_diameter"] / 2, p["thickness"], align=aligned)
+        return part
+    if recipe == "lofted_guide":
+        def transition(inset):
+            return loft([Rectangle(p["inlet_width"] - 2 * inset, p["inlet_height"] - 2 * inset),
+                         Plane.XY.offset(p["length"]) * Rectangle(p["outlet_width"] - 2 * inset,
+                                                                  p["outlet_height"] - 2 * inset)], ruled=True)
+        return transition(0) - transition(p["wall"])
     if recipe == "spacer":
         return Cylinder(p["outer_diameter"] / 2, p["length"], align=aligned) - Cylinder(p["bore_diameter"] / 2, p["length"], align=aligned)
     if recipe == "hole_pattern_plate":
@@ -169,6 +222,43 @@ def build_shape(recipe, p):
         part -= Pos(sx * p["hole_pitch_x"] / 2, p["base_hole_y"], 0) * hole
         part -= Pos(sx * p["hole_pitch_x"] / 2, 0, p["wall_hole_z"]) * Rot(X=-90) * hole
     return part
+
+
+def radial_centres(p):
+    radius = p["bolt_circle_diameter"] / 2
+    return [[radius * math.cos(i * math.pi / 3), radius * math.sin(i * math.pi / 3)] for i in range(6)]
+
+
+def extended_geometry(recipe, p):
+    if recipe == "flanged_hub":
+        f, h, b, t, length = [p[k] for k in ("flange_diameter", "hub_diameter", "bore_diameter", "flange_thickness", "length")]
+        return {"volume_mm3": math.pi / 4 * ((f*f-b*b)*t + (h*h-b*b)*(length-t)),
+                "bounds_min_mm": [-f/2, -f/2, 0], "bounds_max_mm": [f/2, f/2, length],
+                "probes": [{"name": "bore", "point_mm": [0, 0, length/2], "material": False},
+                           {"name": "flange", "point_mm": [(f+h)/4, 0, t/2], "material": True},
+                           {"name": "hub wall", "point_mm": [(h+b)/4, 0, (t+length)/2], "material": True},
+                           {"name": "above flange", "point_mm": [(f+h)/4, 0, (t+length)/2], "material": False}]}
+    if recipe == "radial_hole_plate":
+        r, b, h, t = [p[k]/2 for k in ("outer_diameter", "bore_diameter", "hole_diameter", "thickness")]
+        t *= 2
+        probes = [{"name": "centre bore", "point_mm": [0, 0, t/2], "material": False},
+                  {"name": "inner web", "point_mm": [(p["bore_diameter"] + p["bolt_circle_diameter"] - p["hole_diameter"])/4, 0, t/2], "material": True}]
+        probes += [{"name": f"radial hole {i}", "point_mm": [x, y, t/2], "material": False}
+                   for i, (x, y) in enumerate(radial_centres(p))]
+        return {"volume_mm3": math.pi * (r*r-b*b-6*h*h)*t,
+                "bounds_min_mm": [-r, -r, 0], "bounds_max_mm": [r, r, t], "probes": probes}
+    w0, h0, w1, h1, length, wall = [p[k] for k in ("inlet_width", "inlet_height", "outlet_width", "outlet_height", "length", "wall")]
+    probes = []
+    for fraction in (.25, .75):
+        w, h = w0 + fraction*(w1-w0), h0 + fraction*(h1-h0)
+        for name, point, material in (("open path", [0, 0, fraction*length], False),
+                                      ("X wall", [w/2-wall/2, 0, fraction*length], True),
+                                      ("Y wall", [0, h/2-wall/2, fraction*length], True),
+                                      ("outside", [w/2+wall, 0, fraction*length], False)):
+            probes.append({"name": f"{name} at {fraction}", "point_mm": point, "material": material})
+    return {"volume_mm3": length * (wall * (w0+h0+w1+h1) - 4*wall*wall),
+            "bounds_min_mm": [-max(w0,w1)/2, -max(h0,h1)/2, 0],
+            "bounds_max_mm": [max(w0,w1)/2, max(h0,h1)/2, length], "probes": probes}
 
 
 def check_shape(part, expected):

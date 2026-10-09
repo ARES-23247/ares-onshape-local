@@ -53,7 +53,7 @@ async def verify(geometry=False):
                 init = await session.initialize()
                 assert init.serverInfo.name == "ARES Onshape Local"
                 tools = (await session.list_tools()).tools
-                assert len(tools) == 25
+                assert len(tools) == 30
                 assert value(await session.call_tool("workflow_status", {}))["project"] == config["project"]
                 context = value(await session.call_tool("design_context", {"design": "demo"}))
                 assert context["authoritative_destination"]["document_id"] == "a" * 24
@@ -124,7 +124,7 @@ async def verify(geometry=False):
                         "microversion": "1" * 24, "command": {"feature_id": mate["featureId"], "value": 0, "units": "deg"},
                         "expected_poses": [{"path": ["SIMULATED-root"], "transform": identity}]}]}))
                 assert result["neutral_pose_restored"] and not result["motion_verified"]
-                assert len(value(await session.call_tool("list_part_recipes", {}))["recipes"]) == 3
+                assert len(value(await session.call_tool("list_part_recipes", {}))["recipes"]) == 6
                 if geometry:
                     part = value(await session.call_tool("build_part_recipe", {"recipe": "spacer",
                         "parameters_mm": {"length": 18}, "label": "Synthetic protocol geometry"}))
@@ -162,6 +162,67 @@ async def verify(geometry=False):
                 value(await session.call_tool("bind_recipe_step", {"manifest_source": journal, "head_receipt": "sandbox.json"}))
                 after = value(await session.call_tool("native_recipe_status", {"manifest_source": journal}))
                 assert before["feature_ids"] == after["feature_ids"] and after["parameters_mm"]["length"] == 18
+                # Shared definitions use the same dimensions for preview, construction and revision.
+                part_target = sandbox.replace("c"*24, "e"*24)
+                response["features"] = []
+                response["featureStates"] = {}
+                response["sourceMicroversion"] = "1"*24
+                save("part-head.json", part_target)
+                definition = value(await session.call_tool("save_part_definition", {"recipe": "spacer", "parameters_mm": {}}))["definition"]
+                prepared = value(await session.call_tool("prepare_part_definition", {"definition_source": definition, "head_receipt": "part-head.json"}))
+                part_journal = prepared["manifest"]
+                for index in range(prepared["operations"]):
+                    step = value(await session.call_tool("prepare_recipe_step", {"manifest_source": part_journal, "head_receipt": "part-head.json"}))
+                    feature = json.loads(Path(step["body_path"]).read_text())["feature"]
+                    feature["featureId"] = "SIMULATED-part-"+str(index)
+                    response["features"].append(feature)
+                    response["featureStates"][feature["featureId"]] = {"featureStatus": "OK"}
+                    response["sourceMicroversion"] = f"{index+2:024x}"
+                    save("part-head.json", part_target)
+                    value(await session.call_tool("bind_recipe_step", {"manifest_source": part_journal, "head_receipt": "part-head.json"}))
+                async def verify_saved_geometry(changed=False):
+                    sources = {}
+                    for kind, route in (("body", "bodydetails"), ("mass", "massproperties")):
+                        case = "changed" if changed and kind == "body" else "default"
+                        payload = json.loads((REPO/f"tests/fixtures/spacer-{case}-{kind}.json").read_text())["response"]
+                        micro = response["sourceMicroversion"]
+                        if kind == "body":
+                            payload["microversionId"]["theId"] = micro
+                        else:
+                            payload["microversionId"] = micro
+                            if changed:
+                                for body in payload["bodies"].values():
+                                    body["volume"][0] *= 1.5
+                        url = part_target.replace("/w/"+"b"*24, "/m/"+micro).replace("/features", "/"+route)
+                        sources[kind] = save("part-"+kind+".json", url, payload)
+                    return value(await session.call_tool("verify_native_recipe", {"manifest_source": part_journal,
+                        "head_receipt": "part-head.json", "body_receipt": sources["body"], "mass_receipt": sources["mass"]}))
+                baseline = await verify_saved_geometry()
+                revised = value(await session.call_tool("save_part_definition", {"recipe": "spacer", "parameters_mm": {"length": 18}}))["definition"]
+                update = value(await session.call_tool("prepare_part_definition", {"definition_source": revised,
+                    "head_receipt": "part-head.json", "manifest_source": part_journal}))
+                by_id = {f["featureId"]: f for f in response["features"]}
+                for f in json.loads(Path(update["body_path"]).read_text())["features"]:
+                    by_id[f["featureId"]].update(f)
+                response["sourceMicroversion"] = "f"*24
+                save("part-head.json", part_target)
+                value(await session.call_tool("bind_recipe_step", {"manifest_source": part_journal, "head_receipt": "part-head.json"}))
+                await verify_saved_geometry(changed=True)
+                assert value(await session.call_tool("verify_part_parameter_change", {"manifest_source": part_journal,
+                    "baseline_report": baseline["report"]}))["passed"]
+                assert value(await session.call_tool("part_development_status", {"definition_source": revised,
+                    "manifest_source": part_journal}))["native_geometry_verified"]
+                if geometry:
+                    for family in ("flanged_hub", "radial_hole_plate", "lofted_guide"):
+                        source = value(await session.call_tool("save_part_definition", {"recipe": family, "parameters_mm": {}}))["definition"]
+                        preview = value(await session.call_tool("preview_part_definition", {"definition_source": source}))
+                        assert preview["local_geometry_passed"] and preview["step_roundtrip_passed"]
+                        response["features"] = []
+                        response["featureStates"] = {}
+                        save("preview-head.json", part_target)
+                        job = value(await session.call_tool("prepare_part_definition", {"definition_source": source,
+                            "head_receipt": "preview-head.json", "preview_record": preview["record"]}))
+                        assert job["local_preview"]["local_geometry_verified"]
                 return {"passed": True, "transport": "actual stdio MCP", "tools_discovered": len(tools),
                         "resources_discovered": len(resources), "native_execution": "simulated receipts only", "local_geometry_executed": geometry,
                         "outbound_Onshape_calls": 0, "workspace": "isolated temporary synthetic data"}

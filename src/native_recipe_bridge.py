@@ -19,8 +19,10 @@ import native_recipe_geometry as geometry
 ID = re.compile(r"[0-9a-f]{24}")
 BASE = workflow.project.runtime_path("native-recipes")
 PROFILE = {"api_version": "v17", "library_version": 3083,
-           "feature_types": ["assignVariable", "newSketch", "extrude"],
-           "scope": "Three bounded recipes; standard serialization and default/changed native geometry verified in the separate pilot",
+           "feature_types": ["assignVariable", "newSketch", "extrude", "revolve", "cPlane", "circularPattern", "loft"],
+           "live_pilot_recipes": ["spacer", "mounting_bracket", "hole_pattern_plate"],
+           "local_tested_recipes": ["flanged_hub", "radial_hole_plate", "lofted_guide"],
+           "scope": "Original three families have historical live pilot evidence; added families require current native regeneration and parameter-change validation",
            "evidence": "docs/native-recipes.md; anonymized historical geometry fixtures in tests/fixtures"}
 
 
@@ -29,10 +31,9 @@ def digest(value):
 
 
 def save(path, data):
+    from native_operations import atomic
     workflow.secret_free(data)
-    temporary = path.with_suffix(".tmp")
-    temporary.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    atomic(path, data)
 
 
 def session_receipt(source, method="GET", fresh=False):
@@ -106,6 +107,18 @@ def load(source):
         raise ValueError("Native recipe manifest operation/variable definitions were altered")
     if not 0 <= manifest.get("next_index", -1) <= len(manifest["operations"]):
         raise ValueError("Native recipe journal index is invalid")
+    if manifest.get("part_definition"):
+        from part_development import load_definition
+        definition, evidence = load_definition(manifest["part_definition"]["source"])
+        if (evidence != manifest["part_definition"] or definition["parameters_mm"] != manifest["parameters_mm"]
+            or definition["recipe"] != manifest["recipe"] or definition["design"] != manifest["design"]):
+            raise ValueError("Shared part definition was changed or differs from journal dimensions")
+        pending = manifest.get("pending") or {}
+        if pending.get("part_definition"):
+            new_definition, new_evidence = load_definition(pending["part_definition"]["source"])
+            if (new_evidence != pending["part_definition"] or new_definition["parameters_mm"] != pending["new_parameters_mm"]
+                or new_definition["recipe"] != manifest["recipe"] or new_definition["design"] != manifest["design"]):
+                raise ValueError("Pending shared part definition was changed")
     return path, manifest
 
 
@@ -164,11 +177,17 @@ def tracked_features(manifest, response):
     return features
 
 
-def prepare_native_recipe(recipe, parameters_mm, head_receipt, label="", design="shared"):
+def prepare_native_recipe(recipe, parameters_mm, head_receipt, label="", design="shared", part_definition=None, local_preview=None):
     p = recipes.normalize(recipe, parameters_mm)
     if not isinstance(label, str) or len(label) > 80 or (label and not re.fullmatch(r"[A-Za-z0-9 _.-]+", label)):
         raise ValueError("Use an ASCII recipe label up to 80 characters")
     response, target, evidence = head(head_receipt, design)
+    if part_definition:
+        from part_development import load_definition
+        definition, definition_evidence = load_definition(part_definition["source"])
+        if (definition_evidence != part_definition or definition["parameters_mm"] != p
+            or definition["recipe"] != recipe or definition["design"] != design):
+            raise ValueError("Shared definition differs from the native recipe")
     if response["features"]:
         raise ValueError("Start each bounded recipe in an empty Part Studio; use prepare_native_change for existing models")
     planes = {f["name"]: f["featureId"] for f in response.get("defaultFeatures", []) if f.get("featureType") == "defaultPlane"}
@@ -188,13 +207,16 @@ def prepare_native_recipe(recipe, parameters_mm, head_receipt, label="", design=
                 "executor": "Host agent's signed-in browser/session-authenticated official API Explorer",
                 "outbound_Onshape_calls": 0}
     path = folder / "recipe-manifest.json"
+    if part_definition:
+        manifest["part_definition"] = part_definition
+        manifest["local_preview"] = local_preview
     save(path, manifest)
     return {"manifest": str(path), "recipe": recipe, "target": target, "operations": len(manifest["operations"]),
             "variable_names": manifest["variable_names"], "next": "prepare_recipe_step with a fresh head receipt",
             "scope": "Prepared native recipe journal only; no Onshape request executed", "outbound_Onshape_calls": 0}
 
 
-def request(path, manifest, response, evidence, features, roles, operation):
+def request(path, manifest, response, evidence, features, roles, operation, pending_extra=None):
     target = manifest["target"]
     url = f'https://cad.onshape.com/api/{manifest["profile"]["api_version"]}/partstudios/d/{target["document_id"]}/w/{target["workspace_id"]}/e/{target["element_id"]}/features'
     body = {"sourceMicroversion": response["sourceMicroversion"], "rejectMicroversionSkew": True,
@@ -211,6 +233,7 @@ def request(path, manifest, response, evidence, features, roles, operation):
                            "body_sha256": hashlib.sha256(body_path.read_bytes()).hexdigest(),
                            "expected_features": features, "expected_head": response["sourceMicroversion"],
                            "source_evidence": evidence}
+    manifest["pending"].update(pending_extra or {})
     manifest["native_geometry_verified"] = False
     save(path, manifest)
     return {"manifest": str(path), "method": "POST", "requestUrl": url, "body_path": str(body_path),
@@ -270,6 +293,11 @@ def bind_recipe_step(manifest_source, head_receipt):
                 found = [q.get("queryString") for q in observed.get("queries", [])]
                 if wanted != found:
                     raise ValueError("Native query differs from the prepared target: " + key)
+            if "items" in parameter:
+                expected_array = fingerprint({"parameters": [parameter]})
+                actual_array = fingerprint({"parameters": [observed]})
+                if expected_array != actual_array:
+                    raise ValueError("Native ordered profile array differs from the prepared target: " + key)
         if expected["featureType"] == "newSketch":
             expected_entities = {e["entityId"]: e for e in expected["entities"]}
             actual_entities = {e["entityId"]: e for e in actual.get("entities", [])}
@@ -307,6 +335,9 @@ def bind_recipe_step(manifest_source, head_receipt):
         m["next_index"] += 1
     else:
         m["parameters_mm"] = pending["new_parameters_mm"]
+    if pending.get("part_definition"):
+        m["part_definition"] = pending["part_definition"]
+        m["local_preview"] = pending.get("local_preview")
     m["journal"].append({"operation": pending["operation"], "roles": pending["roles"], "feature_ids": {r: f["featureId"] for r, f in candidates},
                          "before_microversion": pending["expected_head"], "after_microversion": response["sourceMicroversion"],
                          "request_sha256": pending["body_sha256"], "receipt": evidence})
@@ -321,11 +352,19 @@ def bind_recipe_step(manifest_source, head_receipt):
 
 
 @exclusive_manifest
-def prepare_recipe_update(manifest_source, parameters_mm, head_receipt):
+def prepare_recipe_update(manifest_source, parameters_mm, head_receipt, part_definition=None, local_preview=None):
     path, m = load(manifest_source)
     if m["pending"] or m["next_index"] != len(m["operations"]):
         raise ValueError("Complete and bind the current native recipe before updating parameters")
     p = recipes.normalize(m["recipe"], {**m["parameters_mm"], **parameters_mm})
+    if m.get("part_definition"):
+        if not part_definition:
+            raise ValueError("Use prepare_part_definition to revise a journal bound to a shared definition")
+        from part_development import load_definition
+        definition, evidence = load_definition(part_definition["source"])
+        if (evidence != part_definition or definition["parameters_mm"] != p
+            or definition["recipe"] != m["recipe"] or definition["design"] != m["design"]):
+            raise ValueError("Revision definition differs from the native journal")
     response, target, evidence = head(head_receipt, m["design"], m["target"])
     current = tracked_features(m, response)
     changed = [k for k, value in p.items() if value != m["parameters_mm"][k]]
@@ -340,9 +379,10 @@ def prepare_recipe_update(manifest_source, parameters_mm, head_receipt):
                 parameter["expression"] = f"{p[key]:g} mm"
         features.append(f)
         roles.append(role)
-    result = request(path, m, response, evidence, features, roles, "update")
-    m["pending"]["new_parameters_mm"] = p
-    save(path, m)
+    extra = {"new_parameters_mm": p}
+    if part_definition:
+        extra.update({"part_definition": part_definition, "local_preview": local_preview})
+    result = request(path, m, response, evidence, features, roles, "update", extra)
     return {**result, "changed_parameters_mm": {k: p[k] for k in changed},
             "scope": "Update existing named variables together; preserve native sketches/features and IDs"}
 
@@ -367,6 +407,12 @@ def verify_native_recipe(manifest_source, head_receipt, body_receipt, mass_recei
     response, target, head_evidence = head(head_receipt, m["design"], m["target"])
     tracked_features(m, response)
     microversion = response["sourceMicroversion"]
+    if m.get("local_preview"):
+        from part_development import load_definition, preview_evidence
+        definition, _ = load_definition(m["part_definition"]["source"])
+        current_preview = preview_evidence(m["local_preview"]["source"], definition)
+        if current_preview != m["local_preview"]:
+            raise ValueError("Local preview evidence was changed since native preparation")
     receipts = []
     payloads = {}
     for source, operation in ((body_receipt, "bodydetails"), (mass_receipt, "massproperties")):
@@ -394,6 +440,8 @@ def verify_native_recipe(manifest_source, head_receipt, body_receipt, mass_recei
               "parameters_mm": m["parameters_mm"], "target": target, "microversion": microversion,
               "native_feature_ids": m["feature_ids"], "all_tracked_features_regenerated": True,
               "native_geometry": {**checks, "volume_mm3": actual_volume, "volume_matches": True},
+              "part_definition": m.get("part_definition"),
+              "local_preview": m.get("local_preview"),
               "evidence": [head_evidence, *receipts], "physical_validation": False,
               "assembly_motion": "Not applicable to this standalone part", "final_fabrication_release": False}
     previous = m.setdefault("verifications", [])

@@ -11,6 +11,7 @@ from uuid import uuid4
 
 import local_workflow as workflow
 import part_recipes as recipes
+import part_spec
 
 BASE = Path(__file__).resolve().parent
 CAD_PYTHON = Path(os.environ.get("ARES_ONSHAPE_CAD_PYTHON", BASE.parent / ".venv-build123d" / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")))
@@ -22,7 +23,7 @@ def list_part_recipes():
     module_paths += list((environment / "lib").glob("python*/site-packages/build123d/__init__.py"))
     return {**recipes.catalog(), "local_engine_installed": CAD_PYTHON.is_file() and any(p.is_file() for p in module_paths),
             "native_handoff": "prepare_native_recipe/prepare_recipe_step compile these recipes to tracked native variables/sketches/extrudes from fresh session receipts; the host executes in Explorer",
-            "conversion_scope": "Three parametric part families; arbitrary build123d programs or imported STEP histories are not converted automatically"}
+            "conversion_scope": "Six bounded families; added hub, radial plate and lofted guide require live native validation. Arbitrary CAD programs and STEP histories are not converted"}
 
 
 def write_preview(folder, label):
@@ -59,6 +60,7 @@ async def build_part_recipe(recipe, parameters_mm, label="", design="shared", so
         raise ValueError("Recipe output must stay inside the workspace")
     job = {"recipe": recipe, "parameters_mm": parameters, "label": label or ("ARES " + recipe),
            "design": design, "output_dir": str(folder), "source_provenance": provenance}
+    job["part_definition"] = part_spec.make(recipe, parameters, job["label"], design)
     process = await asyncio.create_subprocess_exec(
         str(CAD_PYTHON), str(BASE / "recipe_worker.py"), cwd=str(workflow.WORKSPACE),
         stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,

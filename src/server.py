@@ -6,6 +6,7 @@ import recipe_tools
 import native_recipe_bridge as native_recipes
 import assembly_workflow as assemblies
 import native_operations as operations
+import part_development as parts
 
 mcp = FastMCP("ARES Onshape Local", instructions=workflow.INSTRUCTIONS, log_level="WARNING")
 READ = ToolAnnotations(readOnlyHint=True, destructiveHint=False, openWorldHint=False)
@@ -145,9 +146,39 @@ async def build_part_recipe(recipe: str, parameters_mm: dict, label: str = "", d
 
 
 @mcp.tool(annotations=WRITE)
+def save_part_definition(recipe: str, parameters_mm: dict, label: str = "", design: str = "shared") -> dict:
+    """Save bounded local dimensions for preview and native construction; not a native CAD file."""
+    return parts.save_part_definition(recipe, parameters_mm, label, design)
+
+
+@mcp.tool(annotations=WRITE)
+async def preview_part_definition(definition_source: str) -> dict:
+    """Build local FEASIBILITY geometry and checked STEP/STL from the exact saved part definition."""
+    return await parts.preview_part_definition(definition_source)
+
+
+@mcp.tool(annotations=WRITE)
+def prepare_part_definition(definition_source: str, head_receipt: str, manifest_source: str = "", preview_record: str = "") -> dict:
+    """Start or revise a native journal from a shared definition; validate optional preview artifacts; no execution."""
+    return parts.prepare_part_definition(definition_source, head_receipt, manifest_source, preview_record)
+
+
+@mcp.tool(annotations=READ)
+def part_development_status(definition_source: str, manifest_source: str = "") -> dict:
+    """Inspect definition binding, pending revision and next browser handoff step; never observes a live model."""
+    return parts.part_development_status(definition_source, manifest_source)
+
+
+@mcp.tool(annotations=READ)
+def verify_part_parameter_change(manifest_source: str, baseline_report: str) -> dict:
+    """Check recorded native geometry verifications demonstrate changed parameters with preserved feature IDs."""
+    return parts.verify_part_parameter_change(manifest_source, baseline_report)
+
+
+@mcp.tool(annotations=WRITE)
 def prepare_native_recipe(recipe: str, parameters_mm: dict, head_receipt: str,
                           label: str = "", design: str = "shared") -> dict:
-    """Prepare a tracked native variable/sketch/extrude recipe for a fresh target; does not submit to Onshape."""
+    """Prepare a tracked bounded standard-feature recipe for an empty native target; does not submit to Onshape."""
     return native_recipes.prepare_native_recipe(recipe, parameters_mm, head_receipt, label, design)
 
 

@@ -1,8 +1,9 @@
 # ARES Onshape Local
 
-Version 0.2 adds complete-template Assembly preparation, saved reference/pose review, general
-pending-operation reconciliation, read-only external-source caching and native plane/pattern/loft support.
-All Onshape execution remains in the host's signed-in browser/session Explorer.
+Version 0.3 adds shared local part definitions, checked previews, resumable native handoffs and
+parameter-change evidence checks. Six bounded part families are available. The added flanged hub,
+six-hole radial plate and lofted guide have local tests; their live Onshape regeneration remains to be
+validated. All Onshape execution remains in the host's signed-in browser/session Explorer.
 
 Local MCP tools and the existing `onshape-native-cad` skill for native editable Onshape CAD through a
 signed-in browser or session-authenticated official API Explorer. Supports stdio MCP clients including
@@ -117,6 +118,11 @@ use a local compatibility entrypoint for private receiver integration instead of
 4. Save fresh readbacks and check native feature states, geometry and required motion in Onshape.
    A successful POST or healthy saved state alone does not prove mechanical behavior or release readiness.
 
+For local part development, use save_part_definition, preview_part_definition and prepare_part_definition.
+The saved JSON drives both preview geometry and native construction. It is an ARES recipe, not an
+importable native Onshape file. part_development_status identifies the next handoff step; revisions update
+existing named variables, retaining native feature IDs. See [local part development](docs/local-parts.md).
+
 See [receipts and tools](docs/tools.md), [native recipe scope](docs/native-recipes.md) and the
 [Onshape skill](skills/onshape-native-cad/SKILL.md).
 
@@ -135,7 +141,7 @@ py -3.12 -m venv .venv-build123d
 ```
 
 Use `ARES_ONSHAPE_CAD_PYTHON` for another compatible isolated Python executable. The worker accepts
-only these three recipes, rejects arbitrary code and blocks Python socket operations. STEP/STL are
+only these six recipes, rejects arbitrary code and blocks Python socket operations. STEP/STL are
 temporary references or experimental prints. Final custom CAD needs native Onshape features and actual
 regeneration. The compiler profile is pinned and rejects unvalidated Onshape revisions.
 

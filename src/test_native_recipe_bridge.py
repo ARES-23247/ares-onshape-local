@@ -138,6 +138,10 @@ class NativeBridgeTests(unittest.TestCase):
             for op in compiler.operations(name, p):
                 f = compiler.compile_step(op, name, p, variables, ids, {"Top": "Top", "Front": "Front"}, "test")
                 if f["featureType"] == "newSketch":
+                    if op.get("shape") == "axis":
+                        self.assertEqual(len(f["entities"]), 1)
+                        self.assertTrue(all(c["constraintType"] == "FIX" for c in f["constraints"]))
+                        continue
                     self.assertGreater(len(f["constraints"]), 4)
                     for e in f["entities"]:
                         if not e["isConstruction"]:

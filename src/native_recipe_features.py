@@ -141,7 +141,26 @@ def extrude(name, sketch_id, depth, operation="NEW", body_id=None, opposite=Fals
 def operations(recipe, parameters):
     p = recipes.normalize(recipe, parameters)
     result = [{"role": "var:" + name, "kind": "variable", "parameter": name} for name in p]
-    if recipe == "spacer":
+    if recipe == "flanged_hub":
+        result += [{"role": "axis", "kind": "sketch", "shape": "axis", "plane": "Front"},
+                   {"role": "profile", "kind": "sketch", "shape": "hub_section", "plane": "Front"},
+                   {"role": "solid", "kind": "revolve", "sketch": "profile", "axis": "axis"}]
+    elif recipe == "radial_hole_plate":
+        result += [{"role": "profile", "kind": "sketch", "shape": "radial_annulus", "plane": "Top"},
+                   {"role": "solid", "kind": "extrude", "sketch": "profile", "depth": "thickness", "operation": "NEW"},
+                   {"role": "holes", "kind": "sketch", "shape": "radial_seed", "plane": "Top"},
+                   {"role": "holes_cut", "kind": "extrude", "sketch": "holes", "depth": "thickness", "operation": "REMOVE"},
+                   {"role": "axis", "kind": "sketch", "shape": "axis", "plane": "Front"},
+                   {"role": "hole_pattern", "kind": "circularPattern", "seed": "holes_cut", "axis": "axis"}]
+    elif recipe == "lofted_guide":
+        result += [{"role": "outlet_plane", "kind": "cPlane", "offset": "length"},
+                   {"role": "outer_inlet", "kind": "sketch", "shape": "guide_outer_inlet", "plane": "Top"},
+                   {"role": "outer_outlet", "kind": "sketch", "shape": "guide_outer_outlet", "plane_role": "outlet_plane"},
+                   {"role": "solid", "kind": "loft", "profiles": ["outer_inlet", "outer_outlet"], "operation": "NEW"},
+                   {"role": "inner_inlet", "kind": "sketch", "shape": "guide_inner_inlet", "plane": "Top"},
+                   {"role": "inner_outlet", "kind": "sketch", "shape": "guide_inner_outlet", "plane_role": "outlet_plane"},
+                   {"role": "channel", "kind": "loft", "profiles": ["inner_inlet", "inner_outlet"], "operation": "REMOVE"}]
+    elif recipe == "spacer":
         result += [{"role": "profile", "kind": "sketch", "shape": "annulus", "plane": "Top"},
                    {"role": "solid", "kind": "extrude", "sketch": "profile", "depth": "length", "operation": "NEW"}]
     elif recipe == "hole_pattern_plate":
@@ -170,8 +189,65 @@ def compile_step(operation, recipe, p, variable_names, feature_ids, planes, pref
     if operation["kind"] == "extrude":
         return extrude(name, feature_ids[operation["sketch"]], v[operation["depth"]], operation["operation"],
                        feature_ids.get("solid"), operation.get("opposite", False))
+    if operation["kind"] == "cPlane":
+        return feature("cPlane", name, [query("entities", created_by(planes["Top"], "FACE")),
+            enum("cplaneType", "CPlaneType", "OFFSET"), quantity("offset", v[operation["offset"]]),
+            boolean("oppositeDirection", False)])
+    if operation["kind"] == "revolve":
+        region = extrude("", feature_ids[operation["sketch"]], "1 mm")["parameters"][0]
+        return feature("revolve", name, [enum("bodyType", "ExtendedToolBodyType", "SOLID"),
+            enum("operationType", "NewBodyOperationType", "NEW"), region,
+            query("axis", created_by(feature_ids[operation["axis"]], "EDGE")),
+            boolean("fullRevolve", True), enum("endBound", "RevolveBoundingType", "BLIND"),
+            quantity("angle", "360 deg"), boolean("oppositeDirection", False),
+            boolean("symmetric", False), boolean("hasStartBound", False),
+            boolean("defaultScope", False), empty_query("booleanScope")])
+    if operation["kind"] == "circularPattern":
+        return feature("circularPattern", name, [enum("patternType", "PatternType", "FACE"),
+            query("faces", created_by(feature_ids[operation["seed"]], "FACE")),
+            query("axis", created_by(feature_ids[operation["axis"]], "EDGE")), quantity("angle", "360 deg"),
+            {**quantity("instanceCount", "6"), "isInteger": True}, boolean("equalSpace", True),
+            boolean("oppositeDirection", False), boolean("isCentered", False),
+            boolean("skipInstances", False), boolean("defaultScope", False),
+            query("booleanScope", created_by(feature_ids["solid"], "BODY"))])
+    if operation["kind"] == "loft":
+        items = []
+        for role in operation["profiles"]:
+            parameter = extrude("", feature_ids[role], "1 mm")["parameters"][0]
+            parameter["parameterId"] = "sheetProfileEntities"
+            items.append({"btType": "BTMArrayParameterItem-1843", "parameters": [parameter]})
+        return feature("loft", name, [enum("bodyType", "ExtendedToolBodyType", "SOLID"),
+            enum("operationType", "NewBodyOperationType", operation["operation"]),
+            {"btType": "BTMParameterArray-2025", "parameterId": "sheetProfilesArray", "items": items},
+            enum("startCondition", "LoftEndDerivativeType", "DEFAULT"),
+            enum("endCondition", "LoftEndDerivativeType", "DEFAULT"),
+            boolean("addGuides", False), boolean("addSections", False), boolean("matchConnections", False),
+            boolean("makePeriodic", False), boolean("defaultScope", False),
+            query("booleanScope", created_by(feature_ids["solid"], "BODY"))
+                if operation["operation"] != "NEW" else empty_query("booleanScope")])
     shape = operation["shape"]
-    if shape == "annulus":
+    if shape == "axis":
+        axis = line("axis", [0, -600], [0, 600], True)
+        geometry = ([axis], [constraint("FIX", "fixAxis" + end, [string("localFirst", "axis." + end)])
+                             for end in ("start", "end")])
+    elif shape == "hub_section":
+        b, f, h, t, length = [p[k] for k in ("bore_diameter", "flange_diameter", "hub_diameter", "flange_thickness", "length")]
+        points = [[b/2, 0], [f/2, 0], [f/2, t], [h/2, t], [h/2, length], [b/2, length]]
+        expressions = [[v["bore_diameter"]+"/2", "0 mm"], [v["flange_diameter"]+"/2", "0 mm"],
+                       [v["flange_diameter"]+"/2", v["flange_thickness"]],
+                       [v["hub_diameter"]+"/2", v["flange_thickness"]],
+                       [v["hub_diameter"]+"/2", v["length"]], [v["bore_diameter"]+"/2", v["length"]]]
+        geometry = polygon(points, expressions)
+    elif shape.startswith("guide_"):
+        end = "inlet" if shape.endswith("inlet") else "outlet"
+        w, d = p[end+"_width"], p[end+"_height"]
+        wd, dd = v[end+"_width"], v[end+"_height"]
+        if "inner" in shape:
+            w, d = w - 2*p["wall"], d - 2*p["wall"]
+            wd, dd = "("+wd+"-2*"+v["wall"]+")", "("+dd+"-2*"+v["wall"]+")"
+        geometry = polygon([[-w/2, -d/2], [w/2, -d/2], [w/2, d/2], [-w/2, d/2]],
+                           [[wd+"/2", dd+"/2"]]*4)
+    elif shape in ("annulus", "radial_annulus"):
         geometry = circles([[0, 0], [0, 0]], [["0 mm", "0 mm"]] * 2,
                            [p["outer_diameter"], p["bore_diameter"]], [v["outer_diameter"], v["bore_diameter"]])
     elif shape in ("plate", "base", "wall"):
@@ -181,6 +257,9 @@ def compile_step(operation, recipe, p, variable_names, feature_ids, planes, pref
         dymin, dymax = (dd + "/2", dd + "/2") if shape == "plate" else ("0 mm", dd)
         geometry = polygon([[-w / 2, ymin], [w / 2, ymin], [w / 2, ymax], [-w / 2, ymax]],
                            [[wd + "/2", dymin], [wd + "/2", dymin], [wd + "/2", dymax], [wd + "/2", dymax]])
+    elif shape == "radial_seed":
+        geometry = circles([[p["bolt_circle_diameter"]/2, 0]], [[v["bolt_circle_diameter"]+"/2", "0 mm"]],
+                           [p["hole_diameter"]], [v["hole_diameter"]])
     else:
         if shape == "plate_holes":
             centres = [[sx * p["pitch_x"] / 2, sy * p["pitch_y"] / 2] for sx in (-1, 1) for sy in (-1, 1)]
@@ -190,4 +269,9 @@ def compile_step(operation, recipe, p, variable_names, feature_ids, planes, pref
             centres = [[sx * p["hole_pitch_x"] / 2, p[ykey]] for sx in (-1, 1)]
             expressions = [[v["hole_pitch_x"] + "/2", v[ykey]]] * 2
         geometry = circles(centres, expressions, [p["hole_diameter"]] * len(centres), [v["hole_diameter"]] * len(centres))
-    return sketch(name, planes[operation["plane"]], geometry)
+    plane_id = feature_ids[operation["plane_role"]] if "plane_role" in operation else planes[operation["plane"]]
+    return sketch(name, plane_id, geometry)
+
+
+def empty_query(key):
+    return {"btType": "BTMParameterQueryList-148", "parameterId": key, "queries": []}

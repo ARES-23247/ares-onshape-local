@@ -1,6 +1,6 @@
 # Tools and receipts
 
-The stdio server exposes twenty-five tools. All execution against Onshape belongs to the host browser.
+The stdio server exposes thirty tools. All execution against Onshape belongs to the host browser.
 
 | Tools | Scope |
 | --- | --- |
@@ -11,7 +11,7 @@ The stdio server exposes twenty-five tools. All execution against Onshape belong
 | `review_native_result` | Saved feature states at the expected microversion |
 | `mechanism_calculation` | Roller speed, RPM and shaft-stack arithmetic |
 | `sync_notifications` | Ingest saved local events and queue registered documents for refresh |
-| `list_part_recipes`, `build_part_recipe` | Three bounded optional FEASIBILITY recipes |
+| `list_part_recipes`, `build_part_recipe` | Six bounded optional FEASIBILITY recipes |
 | `prepare_native_recipe`, `prepare_recipe_step` | Target-bound journal and one standard feature body |
 | `bind_recipe_step`, `prepare_recipe_update` | Bind actual IDs; update existing named variables |
 | `native_recipe_status`, `verify_native_recipe` | Journal and saved immutable BRep/volume verification |
@@ -27,6 +27,22 @@ Additional tools in version 0.2:
 | prepare_assembly_change | Complete healthy mate/group/connector/relation templates with head preconditions |
 | review_assembly_result, review_assembly_motion | Saved states, exact root-part references, sampled poses and neutral restoration |
 | native_change_status, record_native_submission, reconcile_native_change | Target-scoped generic request journal and actual result binding |
+
+Additional tools in version 0.3:
+
+| Tools | Scope |
+| --- | --- |
+| `save_part_definition` | Immutable content-addressed recipe dimensions, label, owning design and datum |
+| `preview_part_definition` | Bounded local geometry, STEP roundtrip, mesh preview and definition hashes |
+| `prepare_part_definition` | New native recipe or variable revision using that exact definition and optional checked preview bundle |
+| `part_development_status` | Definition/journal binding, pending revision and next browser step |
+| `verify_part_parameter_change` | Two hash-checked native geometry reports with changed dimensions and preserved native IDs |
+
+For prepare_part_definition, definition_source names the saved JSON, head_receipt is a fresh target
+feature-list receipt, preview_record optionally binds the checked recipe.json bundle, and manifest_source
+selects revision of an existing completed recipe. Definition-bound journals require this tool for revisions;
+prepare_recipe_update remains available for older unbound journals. Preview artifacts and source hashes
+are checked again before native geometry verification. See [local part development](local-parts.md).
 
 Save actual completed reads inside your workspace:
 

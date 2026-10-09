@@ -14,6 +14,9 @@ VARIANTS = {
     "spacer": {"length": 18},
     "mounting_bracket": {"width": 36, "hole_pitch_x": 24, "height": 36, "wall_hole_z": 24},
     "hole_pattern_plate": {"pitch_x": 50, "pitch_y": 25},
+    "flanged_hub": {"hub_diameter": 28, "length": 30},
+    "radial_hole_plate": {"bolt_circle_diameter": 50, "thickness": 6},
+    "lofted_guide": {"outlet_width": 45, "length": 80, "wall": 4},
 }
 
 

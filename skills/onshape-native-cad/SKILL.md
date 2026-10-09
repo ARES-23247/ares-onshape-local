@@ -39,6 +39,10 @@ in the intended assembly. Reuse already verified instances and mates.
 
 ## Local assistance and verification
 
+For authorized local part development followed by native Onshape construction, read
+[references/local-part-development.md](references/local-part-development.md). Shared bounded definitions
+drive local previews and native requests; they are recipes rather than an offline Onshape document format.
+
 Read [references/assemblies-and-recovery.md](references/assemblies-and-recovery.md) for complete
 mate definitions, replacement postconditions, sampled motion and recovery after uncertain submissions.
 
