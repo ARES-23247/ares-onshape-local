@@ -1,17 +1,13 @@
 """Local CAD assistance. Onshape execution belongs to the host's signed-in browser."""
 from __future__ import annotations
 
-import asyncio
 from contextlib import closing
 from datetime import datetime, timezone
 import json
 import math
 from pathlib import Path
 import re
-import shutil
-import sys
 from urllib.parse import parse_qsl, quote, urlsplit
-from uuid import uuid4
 
 import onshape_context as catalog
 import project_config as project
@@ -23,7 +19,9 @@ MAX_OUTPUT = 24000
 DESIGNS = catalog.OWNERS[:-1]
 SECRET_KEYS = catalog.SENSITIVE | {"apikey", "clientsecret", "bearertoken", "credential", "credentials"}
 STANDARD_FEATURES = {"assignVariable", "newSketch", "extrude", "revolve", "fillet", "chamfer",
-                     "shell", "draft", "mirror", "transform", "hole", "boolean", "thicken"}
+                     "shell", "draft", "mirror", "transform", "hole", "boolean", "thicken",
+                     "cPlane", "circularPattern", "linearPattern", "loft"}
+VERSION = "0.2.0"
 SESSION = "onshape-session"
 INSTRUCTIONS = """ARES local Onshape workflow. Project identity is supplied by local configuration.
 1. Select a configured design. Keep separate designs and their ownership independent.
@@ -39,6 +37,13 @@ INSTRUCTIONS = """ARES local Onshape workflow. Project identity is supplied by l
    The server never executes Onshape requests. Browser capability and live signed-in state belong to the host agent.
 7. Save fresh readbacks, review_native_result, and verify actual geometry/motion in Onshape. Healthy states alone
    do not prove clearances, mate motion or physical behavior. Preserve prior models and recovery checkpoints.
+   prepare_assembly_change preserves a healthy template's complete parameter schema. review_assembly_result
+   checks saved mate states, requested part references and poses; review_assembly_motion checks sampled
+   pose expectations and neutral restoration. Missing states are UNKNOWN, never successful regeneration.
+   General native creates/updates use a target journal: record_native_submission before browser Execute,
+   reconcile_native_change against fresh actual readback, and inspect native_change_status after timeouts.
+   A successful HTTP response without the intended changed references/parameters is not completion.
+   register_reference_snapshot caches explicitly configured external library reads without edit permission.
 8. list_part_recipes and build_part_recipe generate bounded build123d FEASIBILITY previews locally. Parameters
    are millimetres. STEP/STL are temporary references/experimental prints; native-plan.json is construction
    instructions, not an executable API body. Recreate selected final parts with native Onshape features.
@@ -57,9 +62,10 @@ def registry():
 
 
 def design_record(design):
-    if design not in DESIGNS:
-        raise ValueError("Choose a configured design: " + ", ".join(DESIGNS))
-    return registry()["designs"][design]
+    designs = registry()["designs"]
+    if design not in designs:
+        raise ValueError("Choose a configured design: " + ", ".join(designs))
+    return designs[design]
 
 
 def secret_free(value):
@@ -107,8 +113,8 @@ def safe_identity(url, units="m"):
     return catalog.identity(url, units)
 
 
-def receipt(source, design, element_id=None, fresh=False):
-    record = design_record(design)
+def session_receipt(source, fresh=False):
+    """Validate provenance independently of edit ownership; never authenticates a request."""
     path, raw, data = local_json(source)
     if not isinstance(data, dict) or data.get("transport") != SESSION or data.get("method") != "GET":
         raise ValueError("Expected an actual GET receipt marked transport=onshape-session")
@@ -116,13 +122,6 @@ def receipt(source, design, element_id=None, fresh=False):
     if not isinstance(status, int) or not 200 <= status < 300 or "response" not in data:
         raise ValueError("Receipt must contain a completed successful GET response")
     ident = safe_identity(data.get("requestUrl", ""), data.get("units", "m"))
-    native = record["onshape"]
-    if ident["document_id"] != native["document_id"] or (element_id and ident["element_id"] != element_id):
-        raise ValueError("Receipt document/element does not match the selected design and target")
-    if ident["context_type"] == "w" and ident["context_id"] != native["workspace_id"]:
-        raise ValueError("Receipt workspace does not match the design registry")
-    if ident["element_id"] in native.get("recovery_elements", []):
-        raise ValueError("This element is a recovery reference, not an editable target")
     if catalog.infer(data) is None:
         raise ValueError("Receipt has inconsistent response/source identity or an unsupported operation")
     if fresh:
@@ -136,11 +135,24 @@ def receipt(source, design, element_id=None, fresh=False):
     return path, raw, data, ident
 
 
+def receipt(source, design, element_id=None, fresh=False):
+    record = design_record(design)
+    path, raw, data, ident = session_receipt(source, fresh)
+    native = record["onshape"]
+    if ident["document_id"] != native["document_id"] or (element_id and ident["element_id"] != element_id):
+        raise ValueError("Receipt document/element does not match the selected design and target")
+    if ident["context_type"] == "w" and ident["context_id"] != native["workspace_id"]:
+        raise ValueError("Receipt workspace does not match the design registry")
+    if ident["element_id"] in native.get("recovery_elements", []):
+        raise ValueError("This element is a recovery reference, not an editable target")
+    return path, raw, data, ident
+
+
 def workflow_status():
     with closing(catalog.connect(DB_PATH)) as db:
         result = catalog.stats(db)
-    return {"server": "ares_onshape_local", "project": registry()["project"], "transport": "stdio", "workspace": str(WORKSPACE),
-            "catalog": result, "designs": list(DESIGNS), "direct_Onshape_requests": False,
+    return {"server": "ares_onshape_local", "version": VERSION, "project": registry()["project"], "transport": "stdio", "workspace": str(WORKSPACE),
+            "catalog": result, "designs": list(registry()["designs"]), "direct_Onshape_requests": False,
             "browser_execution": "Host agent's signed-in browser/session-authenticated official API Explorer",
             "notification_sync_available": bool(registry().get("event_dir")),
             "instructions": INSTRUCTIONS}
@@ -238,11 +250,34 @@ def register_snapshot(source, design, confirmed_session_response):
     if not confirmed_session_response:
         raise ValueError("Confirm this is an actual completed session-authenticated read")
     path, raw, data, ident = receipt(source, design)
+    return index_receipt(path, raw, data, design)
+
+
+def register_reference_snapshot(source, reference, confirmed_session_response):
+    """Read-only external evidence; configuration registration never grants edit ownership."""
+    if not confirmed_session_response:
+        raise ValueError("Confirm this is an actual completed session-authenticated read")
+    configured = registry()["shared_references"].get(reference)
+    if not configured:
+        raise ValueError("Choose an explicitly configured shared reference")
+    path, raw, data, ident = session_receipt(source)
+    if ident["document_id"] != configured["document_id"]:
+        raise ValueError("Receipt document does not match the configured shared reference")
+    if configured.get("workspace_id") and ident["context_type"] == "w" and ident["context_id"] != configured["workspace_id"]:
+        raise ValueError("Reference workspace differs from configuration")
+    if configured.get("element_ids") and ident["element_id"] not in configured["element_ids"]:
+        raise ValueError("Reference element differs from configuration")
+    result = index_receipt(path, raw, data, "shared")
+    result.update({"reference": reference, "editable_target": False})
+    return result
+
+
+def index_receipt(path, raw, data, owner):
     ident, payload, key = catalog.infer(data)
     relative = path.relative_to(WORKSPACE.resolve()).as_posix()
     with closing(catalog.connect(DB_PATH)) as db, db:
         db.execute("INSERT OR REPLACE INTO artifacts VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
-                   (relative, catalog.digest(raw), catalog.digest(catalog.canonical(payload).encode()), design,
+                   (relative, catalog.digest(raw), catalog.digest(catalog.canonical(payload).encode()), owner,
                     catalog.canonical(ident), key, ident["document_id"], ident["element_id"], ident["context_id"],
                     ident["operation"], catalog.now(), relative + " " + catalog.canonical(ident)))
     return {"registered": relative, "file_sha256": catalog.digest(raw), "identity": ident,
@@ -271,8 +306,12 @@ def prepare_native_change(design, element_id, head_receipt, feature, operation="
     if ident["context_type"] != "w" or not re.fullmatch(r"/api/(v[0-9]+/)?partstudios/d/[0-9a-f]{24}/w/[0-9a-f]{24}/e/[0-9a-f]{24}/features", urlsplit(ident["url"]).path):
         raise ValueError("Preparation requires a fresh workspace Part Studio feature-list readback")
     response = data["response"]
-    if not isinstance(response, dict) or not isinstance(response.get("features"), list):
-        raise ValueError("Head receipt must be a native feature-list response")
+    if (not isinstance(response, dict) or response.get("isComplete") is not True
+            or response.get("microversionSkew") or not isinstance(response.get("features"), list)):
+        raise ValueError("Head receipt must be a complete unskewed native feature-list response")
+    if ident["configuration"] != "__unspecified__" or any(
+            k not in {"rollbackBarIndex"} or v != "-1" for k, v in ident["request"]["query"]):
+        raise ValueError("Preparation requires the full unfiltered default feature list")
     head = response.get("sourceMicroversion", "")
     if not isinstance(head, str) or not catalog.ID.fullmatch(head):
         raise ValueError("Feature-list response has no valid sourceMicroversion")
@@ -294,52 +333,13 @@ def prepare_native_change(design, element_id, head_receipt, feature, operation="
     target = f'https://cad.onshape.com/api/{api_version}/partstudios/d/{native["document_id"]}/w/{native["workspace_id"]}/e/{element_id}/features'
     if operation == "update":
         target += "/featureid/" + quote(feature_id, safe="")
-    request_id = uuid4().hex
-    folder = project.runtime_path("native-requests", WORKSPACE) / request_id
-    folder.mkdir(parents=True, exist_ok=False)
-    body_bytes = (json.dumps(body, indent=2, ensure_ascii=False) + "\n").encode()
-    (folder / "body.json").write_bytes(body_bytes)
-    manifest = {"request_id": request_id, "created_at": catalog.now(), "design": design,
-                "method": "POST", "requestUrl": target, "element_id": element_id,
-                "expected_head": head, "source_receipt": path.relative_to(WORKSPACE).as_posix(),
-                "source_sha256": catalog.digest(raw), "body_sha256": catalog.digest(body_bytes),
-                "body_path": str(folder / "body.json"), "executed": False,
-                "executor": "Host agent's signed-in browser/session-authenticated official API Explorer",
-                "explorer_url": "https://cad.onshape.com/glassworks/explorer/",
-                "steps": ["Observe the current head again immediately before execution; reprepare if changed",
-                          "Inspect the current Explorer standard-feature schema and target identities",
-                          "Submit body.json through the Explorer authenticated with the Onshape session",
-                          "Save the actual response and a fresh feature-list readback with source identity",
-                          "Review feature states, actual regenerated geometry and required motion in Onshape"],
-                "scope": "Locally prepared JSON only; no schema/regeneration/geometry verification performed"}
-    (folder / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    return manifest
+    import native_operations
+    return native_operations.prepare(design, ident, response, path, raw, body, target, operation, feature_id)
 
 
 def review_native_result(source, design, element_id, expected_microversion, expected_feature_ids):
-    path, raw, data, ident = receipt(source, design, element_id)
-    if not re.search(r"/partstudios/.*?/features$", urlsplit(ident["url"]).path):
-        raise ValueError("Review requires a native Part Studio feature-list readback")
-    if not catalog.ID.fullmatch(expected_microversion) or not expected_feature_ids:
-        raise ValueError("Provide the post-change microversion and feature IDs to verify")
-    response = data["response"]
-    if not isinstance(response, dict) or response.get("sourceMicroversion") != expected_microversion:
-        raise ValueError("Readback microversion differs from the expected post-change result")
-    features = {f.get("featureId"): f for f in response.get("features", [])}
-    states = response.get("featureStates", {})
-    checks = []
-    for fid in expected_feature_ids:
-        state = states.get(fid, {}) if isinstance(states, dict) else {}
-        if isinstance(state, dict) and isinstance(state.get("message"), dict):
-            state = state["message"]
-        status = state.get("featureStatus", "UNKNOWN") if isinstance(state, dict) else "UNKNOWN"
-        checks.append({"feature_id": fid, "present": fid in features, "feature_status": status,
-                       "suppressed": features.get(fid, {}).get("suppressed", False)})
-    healthy = all(c["present"] and c["feature_status"] == "OK" and not c["suppressed"] for c in checks)
-    return {"source": path.relative_to(WORKSPACE).as_posix(), "file_sha256": catalog.digest(raw),
-            "identity": ident, "checks": checks, "recorded_feature_states_healthy": healthy,
-            "live_geometry_verified": False, "motion_verified": False, "physical_validation": False,
-            "scope": "Checks saved native feature states only; observe actual geometry and motion in Onshape"}
+    import assembly_workflow
+    return assembly_workflow.review_features(source, design, element_id, expected_microversion, expected_feature_ids)
 
 
 def mechanism_calculation(kind, parameters):

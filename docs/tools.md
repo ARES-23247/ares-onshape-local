@@ -1,6 +1,6 @@
 # Tools and receipts
 
-The stdio server exposes eighteen tools. All execution against Onshape belongs to the host browser.
+The stdio server exposes twenty-five tools. All execution against Onshape belongs to the host browser.
 
 | Tools | Scope |
 | --- | --- |
@@ -18,6 +18,15 @@ The stdio server exposes eighteen tools. All execution against Onshape belongs t
 
 Resources: `ares://onshape/workflow`, `ares://onshape/recipes`,
 `ares://onshape/native-recipe-profile`, `ares://onshape/designs/{design}/plan`.
+
+Additional tools in version 0.2:
+
+| Tools | Scope |
+| --- | --- |
+| register_reference_snapshot | Read-only configured purchased/shared-source receipt indexing |
+| prepare_assembly_change | Complete healthy mate/group/connector/relation templates with head preconditions |
+| review_assembly_result, review_assembly_motion | Saved states, exact root-part references, sampled poses and neutral restoration |
+| native_change_status, record_native_submission, reconcile_native_change | Target-scoped generic request journal and actual result binding |
 
 Save actual completed reads inside your workspace:
 
@@ -40,6 +49,34 @@ Preparation requires a successful workspace Part Studio feature-list receipt obs
 matching the selected design, workspace and element. It writes `.ares-onshape/` files containing
 `sourceMicroversion` and `rejectMicroversionSkew=true`. Reobserve the head immediately before submission;
 receipt age does not prove freshness. Updates require an existing feature ID and preserved parameters.
+
+The feature list must be complete, unskewed and unfiltered at the end of the default configuration.
+Part Studio preparation includes cPlane, circularPattern, linearPattern and loft alongside the original
+types. Assembly preparation requires a healthy template of the same native variant from that head.
+Use the current Explorer API version and standard parameter/query serialization.
+
+Generic preparation returns a manifest path. Record submitted before browser Execute, then reconcile
+against a fresh actual feature list. A pending request blocks further preparation for that target across
+processes. Missing results, unchanged parameters and duplicate candidates do not complete it. Only an
+unsubmitted request can be cancelled without result evidence. A matching saved session POST 4xx
+rejection can release it; 408/server failures stay uncertain. For 429, save the actual Retry-After duration
+in seconds as retryAfter. The target remains blocked until that deadline. Target locks are local coordination,
+not a lock on Onshape; reobserve its head and preserve other agents' changes.
+
+Shared references in private configuration identify the allowed document and optional workspace/element_ids.
+register_reference_snapshot indexes their actual reads under shared without granting edit ownership.
+Read configurations/filters/units still form exact cache identities. Edits retain their owning design guard.
+
+review_assembly_result requires feature and definition receipts at the same expected microversion.
+expected_part_references names root instances with instance_id and a reference containing documentId,
+elementId, partId, configuration and documentVersion or documentMicroversion. Optional expected_poses
+names occurrence paths and 16-value row-major transforms with translations in metres. Check the owning
+subassembly separately for a nested replacement. Suppressed recovery features must be explicitly named.
+
+review_assembly_motion takes baseline/restored definition receipts and observations with source,
+microversion, command (feature_id, value, units) and expected_poses. It checks scoped saved matrices and
+all baseline occurrences at restoration; it does not execute commands or prove continuous interference
+clearance. Inspect live regeneration/motion and physical behavior separately.
 
 Cache identities include API version/path, configuration, duplicate query parameters, filters and units.
 Changed files fail hash checks; missing/conflicting records are misses. Workspace snapshots remain

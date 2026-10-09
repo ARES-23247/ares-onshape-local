@@ -1,5 +1,9 @@
 # ARES Onshape Local
 
+Version 0.2 adds complete-template Assembly preparation, saved reference/pose review, general
+pending-operation reconciliation, read-only external-source caching and native plane/pattern/loft support.
+All Onshape execution remains in the host's signed-in browser/session Explorer.
+
 Local MCP tools and the existing `onshape-native-cad` skill for native editable Onshape CAD through a
 signed-in browser or session-authenticated official API Explorer. Supports stdio MCP clients including
 Codex, Gemini CLI, Google Antigravity and Claude Code.
@@ -91,6 +95,18 @@ preserves conflicts. Enterprise-specific Onshape hostnames are not supported in 
 routes are restricted to `cad.onshape.com`.
 
 ## Use
+
+To add a standalone part or another robot, run scripts/configure_project.py with --workspace,
+--name, --document-id and --workspace-id, plus --plan when applicable. Use --reference instead
+for a read-only library/source document, optionally bounded by --element-ids. Supply actual source
+identities; the helper never discovers or creates a live CAD document. Reload the MCP after configuration.
+
+An existing private registry can remain authoritative: set registry_source to its workspace-relative
+JSON path in onshape-project.json. Its current designs are merged with additional local entries.
+Prose-only reference entries are ignored; configured document references retain read-only scope.
+catalog_path can point to the existing workspace SQLite catalog, and runtime_dir can preserve existing
+journals. Neither configuration nor receipts belong in Git. Keep one maintained core and skill source;
+use a local compatibility entrypoint for private receiver integration instead of copying implementation.
 
 1. Read `workflow_status` and the owning `design_context`. Search snapshots and lookup exact immutable
    GET identities before new model reads. Workspace reads always miss the exact cache.

@@ -4,6 +4,8 @@ from mcp.types import ToolAnnotations
 import local_workflow as workflow
 import recipe_tools
 import native_recipe_bridge as native_recipes
+import assembly_workflow as assemblies
+import native_operations as operations
 
 mcp = FastMCP("ARES Onshape Local", instructions=workflow.INSTRUCTIONS, log_level="WARNING")
 READ = ToolAnnotations(readOnlyHint=True, destructiveHint=False, openWorldHint=False)
@@ -48,6 +50,12 @@ def register_snapshot(source: str, design: str, confirmed_session_response: bool
 
 
 @mcp.tool(annotations=WRITE)
+def register_reference_snapshot(source: str, reference: str, confirmed_session_response: bool) -> dict:
+    """Cache a configured external-library/shared GET receipt as read-only evidence; never grants edit ownership."""
+    return workflow.register_reference_snapshot(source, reference, confirmed_session_response)
+
+
+@mcp.tool(annotations=WRITE)
 def prepare_native_change(design: str, element_id: str, head_receipt: str, feature: dict,
                           operation: str = "create", feature_id: str = "", api_version: str = "v12") -> dict:
     """Write standard native Part Studio feature JSON and a browser handoff manifest; never execute."""
@@ -56,9 +64,59 @@ def prepare_native_change(design: str, element_id: str, head_receipt: str, featu
 
 @mcp.tool(annotations=READ)
 def review_native_result(source: str, design: str, element_id: str, expected_microversion: str,
-                         expected_feature_ids: list[str]) -> dict:
+                         expected_feature_ids: list[str], expected_suppressed_feature_ids: list[str] | None = None) -> dict:
     """Check saved post-change native feature states. Does not verify actual geometry or motion."""
-    return workflow.review_native_result(source, design, element_id, expected_microversion, expected_feature_ids)
+    return assemblies.review_features(source, design, element_id, expected_microversion,
+                                      expected_feature_ids, expected_suppressed_feature_ids)
+
+
+@mcp.tool(annotations=WRITE)
+def prepare_assembly_change(design: str, element_id: str, head_receipt: str, feature: dict,
+                            template_feature_id: str, operation: str = "create", feature_id: str = "",
+                            api_version: str = "v17") -> dict:
+    """Prepare a native mate/group/connector/relation using a complete healthy template from the fresh head."""
+    return assemblies.prepare_assembly_change(design, element_id, head_receipt, feature,
+                                              template_feature_id, operation, feature_id, api_version)
+
+
+@mcp.tool(annotations=READ)
+def review_assembly_result(features_source: str, assembly_source: str, design: str, element_id: str,
+                           expected_microversion: str, expected_feature_ids: list[str],
+                           expected_part_references: list[dict] | None = None,
+                           expected_poses: list[dict] | None = None,
+                           expected_suppressed_feature_ids: list[str] | None = None,
+                           matrix_tolerance: float = 1e-8) -> dict:
+    """Check saved assembly feature states, exact root-part sources/configurations and scoped occurrence matrices."""
+    return assemblies.review_assembly_result(features_source, assembly_source, design, element_id,
+        expected_microversion, expected_feature_ids, expected_part_references, expected_poses,
+        expected_suppressed_feature_ids, matrix_tolerance)
+
+
+@mcp.tool(annotations=READ)
+def review_assembly_motion(design: str, element_id: str, baseline_source: str, baseline_microversion: str,
+                           observations: list[dict], restored_source: str, restored_microversion: str,
+                           matrix_tolerance: float = 1e-8) -> dict:
+    """Compare saved commanded pose expectations and complete neutral restoration; no continuous/physical proof."""
+    return assemblies.review_assembly_motion(design, element_id, baseline_source, baseline_microversion,
+                                             observations, restored_source, restored_microversion, matrix_tolerance)
+
+
+@mcp.tool(annotations=READ)
+def native_change_status(manifest_source: str) -> dict:
+    """Inspect a general native-operation journal before any browser submission or retry."""
+    return operations.native_change_status(manifest_source)
+
+
+@mcp.tool(annotations=WRITE)
+def record_native_submission(manifest_source: str, outcome: str = "submitted", response_source: str = "") -> dict:
+    """Record submission/uncertain outcome or a saved definite rejection; never sends a CAD request."""
+    return operations.record_native_submission(manifest_source, outcome, response_source)
+
+
+@mcp.tool(annotations=WRITE)
+def reconcile_native_change(manifest_source: str, readback_source: str) -> dict:
+    """Bind one actual matching created/updated feature from a fresh head; prevent duplicate or unchanged-result retries."""
+    return operations.reconcile_native_change(manifest_source, readback_source)
 
 
 @mcp.tool(annotations=READ)

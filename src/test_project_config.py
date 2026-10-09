@@ -73,6 +73,31 @@ class ProjectConfigTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "array"):
             project.read_registry(self.root)
 
+    def test_external_source_limits_and_live_registry_overlay(self):
+        original = copy.deepcopy(self.config)
+        original["shared_references"] = {"notes": "Historical prose",
+                                        "library": {"document_id": "c" * 24, "element_ids": ["d" * 24]}}
+        (self.root / "registry.json").write_text(json.dumps(original))
+        self.save({"project": "Overlay", "registry_source": "registry.json", "designs": {},
+                   "shared_references": {}, "catalog_path": "existing-cache.sqlite3"})
+        data = project.read_registry(self.root)
+        self.assertIn("demo", data["designs"])
+        self.assertEqual(list(data["shared_references"]), ["library"])
+        original["designs"]["demo"]["onshape"]["workspace_id"] = "e" * 24
+        (self.root / "registry.json").write_text(json.dumps(original))
+        self.assertEqual(project.read_registry(self.root)["designs"]["demo"]["onshape"]["workspace_id"], "e" * 24)
+        self.save({**self.config, "shared_references": {"library": {"document_id": "c" * 24, "element_ids": ["invalid"]}}})
+        with self.assertRaisesRegex(ValueError, "element_ids"):
+            project.read_registry(self.root)
+
+    def test_registry_source_and_catalog_paths_cannot_escape(self):
+        self.save({**self.config, "registry_source": "../outside.json"})
+        with self.assertRaisesRegex(ValueError, "inside"):
+            project.read_registry(self.root)
+        self.save({**self.config, "catalog_path": ".claude/cache.sqlite3"})
+        with self.assertRaisesRegex(ValueError, "internals"):
+            project.read_registry(self.root)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

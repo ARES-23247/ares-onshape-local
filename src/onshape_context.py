@@ -15,7 +15,8 @@ from urllib.parse import parse_qsl, urlencode, urlsplit
 import project_config as project
 
 ROOT = project.WORKSPACE
-DEFAULT_DB = project.runtime_path("cache.sqlite3")
+DEFAULT_DB = (project.workspace_path(project.read_registry()["catalog_path"])
+              if project.read_registry().get("catalog_path") else project.runtime_path("cache.sqlite3"))
 SCHEMA_VERSION = 1
 SENSITIVE = {"authorization", "cookie", "setcookie", "password", "accesskey",
              "secretkey", "accesstoken", "refreshtoken", "xsrftoken", "csrftoken"}
@@ -346,7 +347,8 @@ def context(db, design, workspace=ROOT):
             "plan": design_data.get("plan"), "plan_sha256": digest(plan.read_bytes()) if plan and plan.is_file() else None,
             "registry_sha256": digest(registry_path.read_bytes()) if registry_path.is_file() else None,
             "authoritative_destination": {k: native[k] for k in
-                ("document_id", "workspace_id", "current_integration_element_id", "native_assembly_element_id") if k in native},
+                ("document_id", "workspace_id", "current_integration_element_id", "native_assembly_element_id",
+                 "current_part_studio_element_id") if k in native},
             "recorded_recovery": {k: native[k] for k in ("recovery_version_id", "recovery_microversion") if k in native},
             "shared_references": registry["shared_references"],
             "catalog_counts": [dict(r) for r in rows],

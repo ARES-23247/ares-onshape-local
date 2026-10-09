@@ -50,6 +50,16 @@ def read_registry(workspace=WORKSPACE):
         return {"project": "Unconfigured local workspace", "designs": {}, "shared_references": {}}
     data = json.loads(path.read_text(encoding="utf-8-sig"))
     reject_secrets(data)
+    if isinstance(data, dict) and data.get("registry_source"):
+        source = workspace_path(data["registry_source"], workspace)
+        original = json.loads(source.read_text(encoding="utf-8-sig"))
+        reject_secrets(original)
+        if not isinstance(original, dict) or not isinstance(original.get("designs"), dict):
+            raise ValueError("registry_source must contain an owning design registry")
+        references = {k: v for k, v in original.get("shared_references", {}).items()
+                      if isinstance(v, dict) and v.get("document_id")}
+        data = {**original, **data, "designs": {**original["designs"], **data.get("designs", {})},
+                "shared_references": {**references, **data.get("shared_references", {})}}
     if not isinstance(data, dict) or not isinstance(data.get("project"), str) or not isinstance(data.get("designs"), dict):
         raise ValueError("Project configuration requires project and designs")
     data.setdefault("shared_references", {})
@@ -71,13 +81,18 @@ def read_registry(workspace=WORKSPACE):
     for value in data["shared_references"].values():
         if not isinstance(value, dict) or not isinstance(value.get("document_id"), str) or not ID.fullmatch(value["document_id"]):
             raise ValueError("Shared references need actual document identities")
+        if value.get("workspace_id") and not ID.fullmatch(value["workspace_id"]):
+            raise ValueError("Shared reference workspace identities must be valid Onshape IDs")
+        elements = value.get("element_ids", [])
+        if not isinstance(elements, list) or any(not isinstance(e, str) or not ID.fullmatch(e) for e in elements):
+            raise ValueError("Shared reference element_ids must be valid Onshape IDs")
     if not isinstance(data.get("snapshot_dirs", ["receipts"]), list):
         raise ValueError("snapshot_dirs must be an array")
     for directory in data.get("snapshot_dirs", ["receipts"]):
         if not isinstance(directory, str):
             raise ValueError("snapshot_dirs entries must be paths")
         workspace_path(directory, workspace)
-    for key in ("runtime_dir", "event_dir"):
+    for key in ("runtime_dir", "event_dir", "catalog_path"):
         if data.get(key):
             workspace_path(data[key], workspace)
     return data

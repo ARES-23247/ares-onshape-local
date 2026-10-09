@@ -40,8 +40,8 @@ class LocalTests(unittest.TestCase):
     def make_receipt(self, url=URL, status="OK", age=0, name="head.json"):
         data = {"requestUrl": url, "method": "GET", "httpStatus": 200, "transport": w.SESSION,
                 "observedAt": (datetime.now(timezone.utc) - timedelta(seconds=age)).isoformat(),
-                "response": {"sourceMicroversion": MID, "serializationVersion": "1.2.14",
-                             "features": [{**FEATURE, "featureId": "test/feature+id"}],
+                "response": {"isComplete": True, "sourceMicroversion": MID, "serializationVersion": "1.2.14",
+                             "features": [{**FEATURE, "name": "Existing", "featureId": "test/feature+id"}],
                              "featureStates": {"test/feature+id": {"featureStatus": status}}}}
         (self.root / name).write_text(json.dumps(data))
         return data

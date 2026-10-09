@@ -39,9 +39,14 @@ in the intended assembly. Reuse already verified instances and mates.
 
 ## Local assistance and verification
 
+Read [references/assemblies-and-recovery.md](references/assemblies-and-recovery.md) for complete
+mate definitions, replacement postconditions, sampled motion and recovery after uncertain submissions.
+
 Read [references/ai-efficiency.md](references/ai-efficiency.md) for exact cache identities, saved webhook
 events and the optional ares_onshape_local stdio helper. The helper prepares requests and inspects
 saved receipts. It never executes Onshape actions and supplies no browser session or browser-control tool.
+Use configured owning designs for edits and explicitly configured shared references for purchased-source
+cache receipts. Read-only source registration does not grant edit ownership.
 If browser execution is unavailable, finish useful local preparation and report that actual CAD editing
 requires a browser-capable host/operator; do not switch to a quota-consuming client.
 

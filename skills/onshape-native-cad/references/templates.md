@@ -18,3 +18,7 @@ The example sketch contains numerical geometry; add meaningful native dimensions
 Check fresh feature states, actual geometry and the intended edit after changing the variable.
 Use session-authenticated browser/Explorer submission. Historical pattern evidence does not establish
 verification in a new target.
+
+For construction planes, circular/linear patterns and lofts, read
+[standard-features.md](standard-features.md). For native mate templates and timeout recovery, read
+[assemblies-and-recovery.md](assemblies-and-recovery.md).

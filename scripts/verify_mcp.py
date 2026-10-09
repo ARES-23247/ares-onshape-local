@@ -29,7 +29,7 @@ async def verify(geometry=False):
         (root / "PLAN.md").write_text("Synthetic verification plan")
         config = {"project": "Synthetic protocol workspace", "designs": {"demo": {
             "plan": "PLAN.md", "onshape": {"document_id": "a" * 24, "workspace_id": "b" * 24}}},
-            "shared_references": {}, "event_dir": "events"}
+            "shared_references": {"library": {"document_id": "f" * 24}}, "event_dir": "events"}
         (root / "onshape-project.json").write_text(json.dumps(config))
         response = {"isComplete": True, "sourceMicroversion": "1" * 24,
                     "libraryVersion": 3083, "serializationVersion": "1.2.21",
@@ -53,7 +53,7 @@ async def verify(geometry=False):
                 init = await session.initialize()
                 assert init.serverInfo.name == "ARES Onshape Local"
                 tools = (await session.list_tools()).tools
-                assert len(tools) == 18
+                assert len(tools) == 25
                 assert value(await session.call_tool("workflow_status", {}))["project"] == config["project"]
                 context = value(await session.call_tool("design_context", {"design": "demo"}))
                 assert context["authoritative_destination"]["document_id"] == "a" * 24
@@ -69,6 +69,61 @@ async def verify(geometry=False):
                 prepared = value(await session.call_tool("prepare_native_change", {"design": "demo", "element_id": "c" * 24,
                     "head_receipt": "head.json", "feature": {"btType": "BTMFeature-134", "featureType": "extrude", "name": "Synthetic", "parameters": []}, "api_version": "v17"}))
                 assert not prepared["executed"] and Path(prepared["body_path"]).is_file()
+                status = value(await session.call_tool("native_change_status", {"manifest_source": prepared["manifest"]}))
+                assert status["state"] == "PREPARED"
+                assert (await session.call_tool("prepare_native_change", {"design": "demo", "element_id": "c" * 24,
+                    "head_receipt": "head.json", "feature": {"btType": "BTMFeature-134", "featureType": "extrude",
+                    "name": "Synthetic", "parameters": []}})).isError
+                value(await session.call_tool("record_native_submission", {"manifest_source": prepared["manifest"]}))
+                after = copy.deepcopy(response)
+                created = json.loads(Path(prepared["body_path"]).read_text())["feature"]
+                created["featureId"] = "SIMULATED-created"
+                after["features"].append(created)
+                after["featureStates"][created["featureId"]] = {"featureStatus": "OK"}
+                after["sourceMicroversion"] = "2" * 24
+                save("after.json", payload=after)
+                bound = value(await session.call_tool("reconcile_native_change", {
+                    "manifest_source": prepared["manifest"], "readback_source": "after.json"}))
+                assert bound["bound_feature_ids"] == [created["featureId"]]
+                save("library.json", immutable.replace("a" * 24, "f" * 24))
+                reference = value(await session.call_tool("register_reference_snapshot", {
+                    "source": "library.json", "reference": "library", "confirmed_session_response": True}))
+                assert not reference["editable_target"]
+                mate = {"btType": "BTMMate-64", "featureType": "mate", "name": "Synthetic revolute",
+                        "featureId": "SIMULATED-mate", "parameters": [
+                            {"parameterId": "mateType", "btType": "BTMParameterEnum-145", "value": "REVOLUTE"},
+                            {"parameterId": "limitAxialZ", "btType": "BTMParameterBoolean-144", "value": False}]}
+                assembly_features = copy.deepcopy(response)
+                assembly_features["features"] = [mate]
+                assembly_features["featureStates"] = {mate["featureId"]: {"featureStatus": "OK"}}
+                assembly_url = target.replace("partstudios", "assemblies")
+                save("assembly-features.json", assembly_url, assembly_features)
+                wanted = copy.deepcopy(mate)
+                wanted.pop("featureId")
+                wanted["name"] = "Synthetic additional revolute"
+                assembly_prepared = value(await session.call_tool("prepare_assembly_change", {
+                    "design": "demo", "element_id": "c" * 24, "head_receipt": "assembly-features.json",
+                    "feature": wanted, "template_feature_id": mate["featureId"]}))
+                value(await session.call_tool("record_native_submission", {
+                    "manifest_source": assembly_prepared["manifest"], "outcome": "cancel_unsubmitted"}))
+                identity = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+                assembly = {"rootAssembly": {"documentId": "a" * 24, "elementId": "c" * 24,
+                    "documentMicroversion": "1" * 24, "instances": [],
+                    "occurrences": [{"path": ["SIMULATED-root"], "transform": identity}]}}
+                definition_url = assembly_url.rsplit("/", 1)[0]
+                save("assembly.json", definition_url, assembly)
+                result = value(await session.call_tool("review_assembly_result", {
+                    "features_source": "assembly-features.json", "assembly_source": "assembly.json",
+                    "design": "demo", "element_id": "c" * 24, "expected_microversion": "1" * 24,
+                    "expected_feature_ids": [mate["featureId"]]}))
+                assert result["recorded_assembly_expectations_met"]
+                result = value(await session.call_tool("review_assembly_motion", {
+                    "design": "demo", "element_id": "c" * 24, "baseline_source": "assembly.json",
+                    "baseline_microversion": "1" * 24, "restored_source": "assembly.json",
+                    "restored_microversion": "1" * 24, "observations": [{"source": "assembly.json",
+                        "microversion": "1" * 24, "command": {"feature_id": mate["featureId"], "value": 0, "units": "deg"},
+                        "expected_poses": [{"path": ["SIMULATED-root"], "transform": identity}]}]}))
+                assert result["neutral_pose_restored"] and not result["motion_verified"]
                 assert len(value(await session.call_tool("list_part_recipes", {}))["recipes"]) == 3
                 if geometry:
                     part = value(await session.call_tool("build_part_recipe", {"recipe": "spacer",
